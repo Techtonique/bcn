@@ -1,0 +1,4 @@
+useDynLib(bcn, .registration=TRUE)
+S3method(predict, bcn)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
