@@ -6,7 +6,7 @@
 - From Github: 
 
   ```R
-  devtools::install_github("Techtonique/ahead")
+  devtools::install_github("Techtonique/bcn")
   ```
 
 - From R universe: 
