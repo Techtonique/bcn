@@ -7,6 +7,9 @@
 
   ```R
   devtools::install_github("Techtonique/bcn")
+  
+  # Browse the bcn manual pages
+  help(package = 'bcn')
   ```
 
 - From R universe: 
