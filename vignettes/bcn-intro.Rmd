@@ -83,7 +83,6 @@ help(package = 'bcn')
 Loading packages: 
 
 ```{r}
-library(mlbench) # Machine Learning Benchmark Problems
 library(caret)
 library(randomForest)
 library(pROC)
