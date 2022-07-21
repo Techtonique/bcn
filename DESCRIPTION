@@ -13,5 +13,7 @@ LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    randomForest,
+    pROC
 VignetteBuilder: knitr
