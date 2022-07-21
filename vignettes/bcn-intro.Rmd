@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(bcn)
+library(randomForest)
+library(pROC)
 ```
 
 A few years ago in 2018, I discussed Boosted Configuration (_neural_) Networks (BCN, for multivariate time series forecasting) [in this document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks). Unlike [Stochastic Configuration Networks](https://arxiv.org/pdf/1702.03180.pdf) from which they are inspired, BCNs aren't **randomized**. Rather, they are closer to Gradient Boosting Machines and Matching Pursuit algorithms; with base learners being single-layered feedforward _neural_ networks -- that are actually optimized at each iteration of the algorithm. 
@@ -83,7 +85,7 @@ help(package = 'bcn')
 Loading packages: 
 
 ```{r}
-library(caret)
+library(bcn)
 library(randomForest)
 library(pROC)
 ```
