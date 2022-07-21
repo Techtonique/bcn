@@ -203,20 +203,20 @@ data("penguins")
 ```{r}
 penguins_ <- as.data.frame(penguins)
 
-replacement <- median(palmerpenguins::penguins$bill_length_mm, na.rm = TRUE)
-penguins_$bill_length_mm[is.na(palmerpenguins::penguins$bill_length_mm)] <- replacement
+replacement <- median(penguins$bill_length_mm, na.rm = TRUE)
+penguins_$bill_length_mm[is.na(penguins$bill_length_mm)] <- replacement
 
-replacement <- median(palmerpenguins::penguins$bill_depth_mm, na.rm = TRUE)
-penguins_$bill_depth_mm[is.na(palmerpenguins::penguins$bill_depth_mm)] <- replacement
+replacement <- median(penguins$bill_depth_mm, na.rm = TRUE)
+penguins_$bill_depth_mm[is.na(penguins$bill_depth_mm)] <- replacement
 
-replacement <- median(palmerpenguins::penguins$flipper_length_mm, na.rm = TRUE)
-penguins_$flipper_length_mm[is.na(palmerpenguins::penguins$flipper_length_mm)] <- replacement
+replacement <- median(penguins$flipper_length_mm, na.rm = TRUE)
+penguins_$flipper_length_mm[is.na(penguins$flipper_length_mm)] <- replacement
 
-replacement <- median(palmerpenguins::penguins$body_mass_g, na.rm = TRUE)
-penguins_$body_mass_g[is.na(palmerpenguins::penguins$body_mass_g)] <- replacement
+replacement <- median(penguins$body_mass_g, na.rm = TRUE)
+penguins_$body_mass_g[is.na(penguins$body_mass_g)] <- replacement
 
 # replacing NA's by the most frequent occurence
-penguins_$sex[is.na(palmerpenguins::penguins$sex)] <- "male" # most frequent
+penguins_$sex[is.na(penguins$sex)] <- "male" # most frequent
 
 print(summary(penguins_))
 print(sum(is.na(penguins_)))
