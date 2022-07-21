@@ -232,7 +232,7 @@ bcn <- function(x,
 
     if (show_progress)
     {
-      pb <- txtProgressBar(max = B, style = 3)
+      pb <- utils::txtProgressBar(max = B, style = 3)
     }
 
 
@@ -257,7 +257,7 @@ bcn <- function(x,
       {
         set.seed(L)
         out_opt <- stats::nlminb(
-            start = lower + (upper - lower) * runif(length(lower)),
+            start = lower + (upper - lower) * stats::runif(length(lower)),
             objective = InequalityOF,
             lower = lower,
             upper = upper
@@ -268,7 +268,7 @@ bcn <- function(x,
       {
         set.seed(L)
         out_opt <- dfoptim::nmkb(
-            par = lower + (upper - lower) * runif(length(lower)),
+            par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
             upper = upper
@@ -279,7 +279,7 @@ bcn <- function(x,
       {
         set.seed(L)
         out_opt <- dfoptim::hjkb(
-            par = lower + (upper - lower) * runif(length(lower)),
+            par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
             upper = upper
@@ -290,7 +290,7 @@ bcn <- function(x,
       {
         set.seed(L)
         out_opt <- dfoptim::mads(
-            par = lower + (upper - lower) * runif(length(lower)),
+            par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
             upper = upper
@@ -348,7 +348,7 @@ bcn <- function(x,
       if (method == "direct")
       {
         matrix_hL_opt[, L] <- hL_opt
-        betaL_opt <- .lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
+        betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
                              y = centered_y)$coef
         matrix_betas_opt[, L] <- betaL_opt[L, ]
         # update the error
@@ -364,7 +364,7 @@ bcn <- function(x,
       current_error_norm <- norm(current_error, type = "F")
       errors_norm[L] <- current_error_norm
 
-      if (show_progress) setTxtProgressBar(pb, L)
+      if (show_progress) utils::setTxtProgressBar(pb, L)
 
       L <- L + 1
 
@@ -372,7 +372,7 @@ bcn <- function(x,
 
     if (show_progress)
     {
-      setTxtProgressBar(pb, B)
+      utils::setTxtProgressBar(pb, B)
       close(pb)
     }
 
@@ -430,7 +430,7 @@ bcn <- function(x,
 
     if (show_progress)
     {
-      pb <- txtProgressBar(max = B, style = 3)
+      pb <- utils::txtProgressBar(max = B, style = 3)
     }
 
 
@@ -451,7 +451,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- stats::nlminb(
-              start = lower + (upper - lower) * runif(length(lower)),
+              start = lower + (upper - lower) * stats::runif(length(lower)),
               objective = InequalityOF,
               lower = lower,
               upper = upper
@@ -462,7 +462,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::nmkb(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               fn = InequalityOF,
               lower = lower,
               upper = upper
@@ -473,7 +473,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::hjkb(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               fn = InequalityOF,
               lower = lower,
               upper = upper
@@ -484,7 +484,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::mads(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               fn = InequalityOF,
               lower = lower,
               upper = upper
@@ -494,7 +494,7 @@ bcn <- function(x,
         if(type_optim == "bobyqa")
         {
           set.seed(L)
-          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * runif(length(lower)),
+          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
                                    fn = InequalityOF,
                                    lower = lower,
                                    upper = upper)
@@ -510,7 +510,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- stats::nlminb(
-              start = lower + (upper - lower) * runif(length(lower)),
+              start = lower + (upper - lower) * stats::runif(length(lower)),
               # dd <- d + 1
               objective = InequalityOF,
               lower = lower,
@@ -522,7 +522,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::nmkb(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               # dd <- d + 1
               fn = InequalityOF,
               lower = lower,
@@ -534,7 +534,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::hjkb(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               # dd <- d + 1
               fn = InequalityOF,
               lower = lower,
@@ -546,7 +546,7 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- dfoptim::mads(
-              par = lower + (upper - lower) * runif(length(lower)),
+              par = lower + (upper - lower) * stats::runif(length(lower)),
               fn = InequalityOF,
               lower = lower,
               upper = upper
@@ -556,7 +556,7 @@ bcn <- function(x,
         if(type_optim == "bobyqa")
         {
           set.seed(L)
-          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * runif(length(lower)),
+          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
                         fn = InequalityOF,
                         lower = lower,
                         upper = upper)
@@ -605,7 +605,7 @@ bcn <- function(x,
     if (method == "direct")
     {
       matrix_hL_opt[, L] <- hL_opt
-      betaL_opt <- .lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
+      betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
                            y = centered_y)$coef
       matrix_betas_opt[, L] <- betaL_opt[L, ]
 
@@ -622,14 +622,14 @@ bcn <- function(x,
     current_error_norm <- norm(current_error, type = "F")
     errors_norm[L] <- current_error_norm
 
-    if (show_progress) setTxtProgressBar(pb, L)
+    if (show_progress) utils::setTxtProgressBar(pb, L)
 
     L <- L + 1
   } # end while(L <= B && current_error_norm > tol) for col_sample == 1
 
     if (show_progress)
     {
-      setTxtProgressBar(pb, B)
+      utils::setTxtProgressBar(pb, B)
       close(pb)
     }
 
