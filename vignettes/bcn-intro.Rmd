@@ -1,0 +1,274 @@
+---
+title: "Introduction to `bcn` package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bcn-intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bcn)
+```
+
+A few years ago in 2018, I discussed Boosted Configuration (_neural_) Networks (BCN, for multivariate time series forecasting) [in this document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks). Unlike [Stochastic Configuration Networks](https://arxiv.org/pdf/1702.03180.pdf) from which they are inspired, BCNs aren't **randomized**. Rather, they are closer to Gradient Boosting Machines and Matching Pursuit algorithms; with base learners being single-layered feedforward _neural_ networks -- that are actually optimized at each iteration of the algorithm. 
+
+The mathematician that you are has certainly been 
+asking himself questions about the convexity of the problem at line 4, algorithm 1 (in 
+[the document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks)). As of July 2022, there are unfortunately no answers to that question. BCNs works well __empirically__, as we'll see, and finding the maximum at line 4 of the algorithm is achieved, by default, with R's `stats::nlminb`. Other derivative-free optimizers are available in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn). 
+
+
+As it will be shown in this document, BCNs can be used __for classification__. For this purpose, and as implemented in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn), the response (variable to be explained) containing the classes is one-hot encoded as a matrix of probabilities equal to 0 or 1. Then, the classification technique dealing with a one-hot encoded response matrix is similar to the one presented [in this  post](https://thierrymoudiki.github.io/blog/2021/09/26/python/quasirandomizednn/classification-using-regression).
+
+3 _toy_ datasets are used for this basic demo of R package `bcn`: Iris, Wine, Penguins. 
+For each dataset, hyperparameter tuning has already been done. Repeated 5-fold cross-validation was carried out on 80% of the data, for each dataset, and the accuracy reported in the table below is calculated on the remaining 20% of the data. BCN results are compared to  [Random Forest](https://cran.r-project.org/web/packages/randomForest/)'s (with default parameters), in order to verify that BCN results are not absurd -- it's not a competition between Random Forest and BCN here. 
+
+The future for [R package `bcn`](https://github.com/Techtonique/bcn) (in no particular order)? 
+
+- Implement BCN for regression (a continuous response)
+- Improve the speed of execution for high dimensional problems
+- Implement a Python version 
+
+
+| Dataset      | BCN test set Accuracy | Random Forest test set accuracy |
+|--------------|:-----:|-----------:|
+| iris |  **100%** |        93.33% |
+| Wine |  **97.22%** |      94.44% |
+| Penguins |  **100%** |        **100%** |
+
+
+
+**Content**
+
+- [0 - Installing/Loading Packages](#installing-and-loading-packages)
+- [1 - iris dataset](#iris-dataset)
+- [2 - wine dataset](#wine-dataset)
+- [3 - Palmer Penguins dataset](#penguins-dataset)
+
+
+
+# 0 - Installing and loading packages
+
+Installing `bcn` From Github:
+
+```R
+devtools::install_github("Techtonique/bcn")
+
+# Browse the bcn manual pages
+help(package = 'bcn')
+```
+
+Installing `bcn` from R universe:
+
+```R
+# Enable repository from techtonique
+options(repos = c(
+  techtonique = 'https://techtonique.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+  
+# Download and install bcn in R
+install.packages('bcn')
+
+# Browse the bcn manual pages
+help(package = 'bcn')
+````
+
+Loading packages: 
+
+```{r}
+library(mlbench) # Machine Learning Benchmark Problems
+library(caret)
+library(randomForest)
+library(pROC)
+```
+
+
+# 1 - iris dataset 
+
+```{r}
+data("iris")
+```
+
+```{r}
+head(iris)
+
+dim(iris)
+
+set.seed(1234)
+train_idx <- sample(nrow(iris), 0.8 * nrow(iris))
+X_train <- as.matrix(iris[train_idx, -ncol(iris)])
+X_test <- as.matrix(iris[-train_idx, -ncol(iris)])
+y_train <- iris$Species[train_idx]
+y_test <- iris$Species[-train_idx]
+```
+
+```{r fit_iris}
+ptm <- proc.time()
+fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 10L, nu = 0.335855,
+                    lam = 10**0.7837525, r = 1 - 10**(-5.470031), tol = 10**-7,
+                    activation = "tanh", type_optim = "nlminb", show_progress = FALSE)
+cat("Elapsed: ", (proc.time() - ptm)[3])
+```
+
+```{r}
+plot(fit_obj$errors_norm, type='l')
+```
+
+```{r}
+preds <- predict(fit_obj, newx = X_test)
+
+mean(preds == y_test)
+
+table(y_test, preds)
+```
+
+```{r}
+rf <- randomForest::randomForest(x = X_train, y = y_train)
+mean(predict(rf, newdata=as.matrix(X_test)) == y_test)
+```
+
+```{r}
+print(head(predict(fit_obj, newx = X_test, type='probs')))
+print(head(predict(rf, newdata=as.matrix(X_test), type='prob')))
+```
+
+
+# 2-  wine dataset 
+
+
+```{r}
+data(wine)
+```
+
+```{r}
+head(wine)
+
+dim(wine)
+
+set.seed(1234)
+train_idx <- sample(nrow(wine), 0.8 * nrow(wine))
+X_train <- as.matrix(wine[train_idx, -ncol(wine)])
+X_test <- as.matrix(wine[-train_idx, -ncol(wine)])
+y_train <- as.factor(wine$target[train_idx])
+y_test <- as.factor(wine$target[-train_idx])
+```
+
+```{r fit_wine}
+ptm <- proc.time()
+fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 6L, nu = 0.8715725,
+                    lam = 10**0.2143678, r = 1 - 10**(-6.1072786),
+                    tol = 10**-4.9605713, show_progress = FALSE)
+cat("Elapsed: ", (proc.time() - ptm)[3])
+```
+
+```{r}
+plot(fit_obj$errors_norm, type='l')
+```
+
+
+```{r}
+preds <- predict(fit_obj, newx = X_test)
+
+mean(preds == y_test)
+
+table(y_test, preds)
+```
+
+```{r}
+rf <- randomForest::randomForest(x = X_train, y = y_train)
+mean(predict(rf, newdata=as.matrix(X_test)) == y_test)
+```
+
+```{r}
+print(head(predict(fit_obj, newx = X_test, type='probs')))
+print(head(predict(rf, newdata=as.matrix(X_test), type='prob')))
+```
+
+
+# 3 - Penguins dataset
+
+```{r}
+data("penguins")
+```
+
+```{r}
+penguins_ <- as.data.frame(penguins)
+
+replacement <- median(palmerpenguins::penguins$bill_length_mm, na.rm = TRUE)
+penguins_$bill_length_mm[is.na(palmerpenguins::penguins$bill_length_mm)] <- replacement
+
+replacement <- median(palmerpenguins::penguins$bill_depth_mm, na.rm = TRUE)
+penguins_$bill_depth_mm[is.na(palmerpenguins::penguins$bill_depth_mm)] <- replacement
+
+replacement <- median(palmerpenguins::penguins$flipper_length_mm, na.rm = TRUE)
+penguins_$flipper_length_mm[is.na(palmerpenguins::penguins$flipper_length_mm)] <- replacement
+
+replacement <- median(palmerpenguins::penguins$body_mass_g, na.rm = TRUE)
+penguins_$body_mass_g[is.na(palmerpenguins::penguins$body_mass_g)] <- replacement
+
+# replacing NA's by the most frequent occurence
+penguins_$sex[is.na(palmerpenguins::penguins$sex)] <- "male" # most frequent
+
+print(summary(penguins_))
+print(sum(is.na(penguins_)))
+
+# one-hot encoding for covariates
+penguins_mat <- model.matrix(species ~., data=penguins_)[,-1]
+penguins_mat <- cbind(penguins_$species, penguins_mat)
+penguins_mat <- as.data.frame(penguins_mat)
+colnames(penguins_mat)[1] <- "species"
+
+print(head(penguins_mat))
+print(tail(penguins_mat))
+
+y <- as.integer(penguins_mat$species)
+X <- as.matrix(penguins_mat[,2:ncol(penguins_mat)])
+
+n <- nrow(X)
+p <- ncol(X)
+
+set.seed(1234)
+index_train <- sample(1:n, size=floor(0.8*n))
+X_train <- X[index_train, ]
+y_train <- factor(y[index_train])
+X_test <- X[-index_train, ]
+y_test <- factor(y[-index_train])
+```
+
+```{r fit_penguins}
+ptm <- proc.time()
+fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 23, nu = 0.470043,
+                    lam = 10**-0.05766029, r = 1 - 10**(-7.905866), tol = 10**-7, 
+                    show_progress = FALSE)
+cat("Elapsed: ", (proc.time() - ptm)[3])
+```
+
+```{r}
+plot(fit_obj$errors_norm, type='l')
+```
+
+
+```{r}
+preds <- predict(fit_obj, newx = X_test)
+
+mean(preds == y_test)
+
+table(y_test, preds)
+```
+
+```{r}
+rf <- randomForest::randomForest(x = X_train, y = y_train)
+mean(predict(rf, newdata=as.matrix(X_test)) == y_test)
+```
+
+```{r}
+print(head(predict(fit_obj, newx = X_test, type='probs')))
+print(head(predict(rf, newdata=as.matrix(X_test), type='prob')))
+```
