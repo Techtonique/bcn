@@ -10,7 +10,8 @@
 #' @param lam a numeric, defining lower and upper bounds neural network's coefficients
 #' @param r a numeric, usually 0.99, 0.999, 0.999 etc.
 #' @param tol a numeric, convergence tolerance for an early stopping
-#' @param type_optim a string, the type of optimization procedure used for finding neural network's coefficients at each iteration
+#' @param type_optim a string, the type of optimization procedure used for finding neural network's coefficients at each iteration ("nlminb", "nmkb", "hjkb", "mads",
+#' "bobyqa", "newuoa", "uobyqa")
 #' @param activation a string, the activation function (must be bounded)
 #' @param method a string, 'greedy' or 'direct'
 #' @param hidden_layer_bias a boolean, saying if there is a bias parameter in neural network's coefficients
@@ -45,7 +46,8 @@ bcn <- function(x,
                 lam = 0.1,
                 r = 0.3,
                 tol = 1e-10,
-                type_optim = c("nlminb", "nmkb", "hjkb", "mads", "bobyqa"),
+                type_optim = c("nlminb", "nmkb", "hjkb", "mads",
+                               "bobyqa", "newuoa", "uobyqa"),
                 activation = c("sigmoid", "tanh"),
                 method = c("greedy", "direct"),
                 hidden_layer_bias = TRUE,
@@ -297,6 +299,29 @@ bcn <- function(x,
           )
       }
 
+      if(type_optim == "bobyqa")
+      {
+        set.seed(L)
+        out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                 fn = InequalityOF,
+                                 lower = lower,
+                                 upper = upper)
+      }
+
+      if(type_optim == "newuoa")
+      {
+        set.seed(L)
+        out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                 fn = InequalityOF)
+      }
+
+      if(type_optim == "uobyqa")
+      {
+        set.seed(L)
+        out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                 fn = InequalityOF)
+      }
+
       w_opt <- out_opt$par
       matrix_ws_opt[, L] <- w_opt
 
@@ -425,7 +450,7 @@ bcn <- function(x,
         # return -xsiL*(min(xsi) > 0)
         return(-sum(xsi_vec) * (min(xsi_vec) > 0))
       }
-      #InequalityOF <- compiler::cmpfun(InequalityOF)
+      InequalityOF <- compiler::cmpfun(InequalityOF)
     }
 
     if (show_progress)
@@ -500,6 +525,20 @@ bcn <- function(x,
                                    upper = upper)
         }
 
+        if(type_optim == "newuoa")
+        {
+          set.seed(L)
+          out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                   fn = InequalityOF)
+        }
+
+        if(type_optim == "uobyqa")
+        {
+          set.seed(L)
+          out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                   fn = InequalityOF)
+        }
+
       } else {
         # hidden_layer_bias == TRUE
 
@@ -560,6 +599,20 @@ bcn <- function(x,
                         fn = InequalityOF,
                         lower = lower,
                         upper = upper)
+        }
+
+        if(type_optim == "newuoa")
+        {
+          set.seed(L)
+          out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                   fn = InequalityOF)
+        }
+
+        if(type_optim == "uobyqa")
+        {
+          set.seed(L)
+          out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
+                                   fn = InequalityOF)
         }
 
       }
