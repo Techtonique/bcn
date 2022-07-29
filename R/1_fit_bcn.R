@@ -56,7 +56,7 @@ bcn <- function(x,
                 seed = 123)
 {
   stopifnot(is.factor(y))
-  stopifnot(nu > 0 && nu <= 1)
+  stopifnot(nu > 0 && nu < 2)
   stopifnot(r > 0 && r < 1)
   stopifnot(B > 1)
   stopifnot(col_sample >= 0.5 && col_sample <= 1) #must be &&
