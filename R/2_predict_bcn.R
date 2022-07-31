@@ -24,6 +24,8 @@
 #' print(predict(fit_obj, newx = X_test) == y_test)
 #' print(mean(predict(fit_obj, newx = X_test) == y_test))
 #'
+#' print(predict(fit_obj, newx = X_test, type="probs"))
+#'
 predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
 {
 
@@ -107,22 +109,26 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
       }
   }
 
-  type <- match.arg(type)
-  probs <- bcn::get_probabilities(fitted_xL)
-  # check correspondance between 'response' and 'probs'
-  # check correspondance between 'response' and 'probs'
-  # check correspondance between 'response' and 'probs'
-  if (type == "response")
+
+  if (fit_obj$type_problem == "classification")
   {
-    temp <- bcn::get_classes(probs)
-    res <- sapply(1:length(temp),
-                  function(i) bcn::vlookup(temp[i], fit_obj$table_classes,
-                                           "class", "label"))
-    return(factor(res, levels = fit_obj$levels))
+    type <- match.arg(type)
+    probs <- bcn::get_probabilities(fitted_xL)
+    if (type == "response")
+    {
+      temp <- bcn::get_classes(probs)
+      res <- sapply(1:length(temp),
+                    function(i) bcn::vlookup(temp[i], fit_obj$table_classes,
+                                             "class", "label"))
+      return(factor(res, levels = fit_obj$levels))
+    }
+    if (type == "probs")
+    {
+      colnames(probs) <- fit_obj$levels
+      return(probs)
+    }
+  } else {
+    return(drop(fitted_xL))
   }
-  if (type == "probs")
-  {
-    colnames(probs) <- fit_obj$levels
-    return(probs)
-  }
+
 }

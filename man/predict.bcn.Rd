@@ -35,4 +35,6 @@ activation = "tanh", type_optim = "nlminb")
 print(predict(fit_obj, newx = X_test) == y_test)
 print(mean(predict(fit_obj, newx = X_test) == y_test))
 
+print(predict(fit_obj, newx = X_test, type="probs"))
+
 }

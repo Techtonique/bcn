@@ -29,6 +29,8 @@
   
 # Quick start 
 
+## Classification
+
 ```R
 # split data into training/test sets
 set.seed(1234)
@@ -45,4 +47,24 @@ activation = "tanh", type_optim = "nlminb")
 
 # accuracy
 print(mean(predict(fit_obj, newx = X_test) == y_test))
+```
+
+## Regression
+
+```R
+ library(MASS)
+
+ data("Boston") # dataset has an ethical problem
+
+ set.seed(1234)
+ train_idx <- sample(nrow(Boston), 0.8 * nrow(Boston))
+ X_train <- as.matrix(Boston[train_idx, -ncol(Boston)])
+ X_test <- as.matrix(Boston[-train_idx, -ncol(Boston)])
+ y_train <- Boston$medv[train_idx]
+ y_test <- Boston$medv[-train_idx]
+
+ fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 500, nu = 0.5646811,
+ lam = 10**0.5106108, r = 1 - 10**(-7), tol = 10**-7,
+ col_sample = 0.5, activation = "tanh", type_optim = "nlminb")
+ print(sqrt(mean((predict(fit_obj, newx = X_test) - y_test)**2)))
 ```

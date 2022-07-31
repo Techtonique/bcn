@@ -24,6 +24,7 @@
 #'
 #' @examples
 #'
+#' # iris dataset
 #' set.seed(1234)
 #' train_idx <- sample(nrow(iris), 0.8 * nrow(iris))
 #' X_train <- as.matrix(iris[train_idx, -ncol(iris)])
@@ -37,6 +38,24 @@
 #'
 #' print(predict(fit_obj, newx = X_test) == y_test)
 #' print(mean(predict(fit_obj, newx = X_test) == y_test))
+#'
+#'
+#' # Boston dataset (dataset has an ethical problem)
+#' library(MASS)
+#' data("Boston")
+#'
+#' set.seed(1234)
+#' train_idx <- sample(nrow(Boston), 0.8 * nrow(Boston))
+#' X_train <- as.matrix(Boston[train_idx, -ncol(Boston)])
+#' X_test <- as.matrix(Boston[-train_idx, -ncol(Boston)])
+#' y_train <- Boston$medv[train_idx]
+#' y_test <- Boston$medv[-train_idx]
+#'
+#' fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 500, nu = 0.5646811,
+#' lam = 10**0.5106108, r = 1 - 10**(-7), tol = 10**-7,
+#' col_sample = 0.5, activation = "tanh", type_optim = "nlminb")
+#' print(sqrt(mean((predict(fit_obj, newx = X_test) - y_test)**2)))
+#'
 #'
 bcn <- function(x,
                 y,
@@ -55,7 +74,6 @@ bcn <- function(x,
                 show_progress = TRUE,
                 seed = 123)
 {
-  stopifnot(is.factor(y))
   stopifnot(nu > 0 && nu < 2)
   stopifnot(r > 0 && r < 1)
   stopifnot(B > 1)
@@ -65,16 +83,29 @@ bcn <- function(x,
   # dd <- 0 # for hidden_layer_bias = TRUE
   # dd_reduced <- 0 # for col_sample < 1 && for hidden_layer_bias = TRUE
 
-  table_classes <-
-    unique(cbind.data.frame(class = as.factor(as.numeric(y)),
-                            label = y))
-  levels <- levels(y)
+  # classification problem
+  if (is.factor(y))
+  {
+    type_problem <- "classification"
 
-  rownames(table_classes) <- NULL
+    table_classes <-
+      unique(cbind.data.frame(class = as.factor(as.numeric(y)),
+                              label = y))
+    levels <- levels(y)
 
-  n_classes <- length(unique(y))
+    rownames(table_classes) <- NULL
 
-  y <- bcn::one_hot_encode(as.numeric(y), n_classes)
+    n_classes <- length(unique(y))
+
+    y <- bcn::one_hot_encode(as.numeric(y), n_classes)
+  }
+
+  # regression problem
+  if (is.vector(y))
+  {
+    type_problem <- "regression"
+    y <- matrix(y, ncol = 1)
+  }
 
   if (hidden_layer_bias == TRUE)
   {
@@ -693,55 +724,104 @@ names(ym) <- names_m
 names(xm) <- names_d
 names(xsd) <- names_d
 
-if (!is.null(d_reduced) && d_reduced == 1)
+if (type_problem == "classification")
 {
-  out <- list(
-    y = y,
-    x = x,
-    ym = ym,
-    xm = xm,
-    xsd = xsd,
-    col_sample = col_sample,
-    table_classes = table_classes,
-    #betas_opt = matrix_betas_opt[, bool_non_zero_betas],
-    #ws_opt = t(matrix_ws_opt[, bool_non_zero_betas]),
-    betas_opt = matrix_betas_opt,
-    ws_opt = t(matrix_ws_opt),
-    type_optim = type_optim,
-    col_sample_indices = col_sample_indices,
-    activ = activation,
-    hidden_layer_bias = hidden_layer_bias,
-    nu = nu,
-    errors_norm = errors_norm,
-    current_error = current_error,
-    current_error_norm = current_error_norm
-  )
+  if (!is.null(d_reduced) && d_reduced == 1)
+  {
+    out <- list(
+      y = y,
+      x = x,
+      ym = ym,
+      xm = xm,
+      xsd = xsd,
+      col_sample = col_sample,
+      table_classes = table_classes,
+      betas_opt = matrix_betas_opt,
+      ws_opt = t(matrix_ws_opt),
+      type_optim = type_optim,
+      col_sample_indices = col_sample_indices,
+      activ = activation,
+      hidden_layer_bias = hidden_layer_bias,
+      nu = nu,
+      errors_norm = errors_norm,
+      current_error = current_error,
+      current_error_norm = current_error_norm,
+      type_problem = "classification"
+    )
 
-  return(structure(out, class = "bcn"))
+    return(structure(out, class = "bcn"))
 
+  } else {
+    out <- list(
+      y = y,
+      x = x,
+      ym = ym,
+      xm = xm,
+      xsd = xsd,
+      col_sample = col_sample,
+      table_classes = table_classes,
+      levels = levels,
+      betas_opt = as.matrix(matrix_betas_opt),
+      ws_opt = as.matrix(matrix_ws_opt),
+      type_optim = type_optim,
+      col_sample_indices = col_sample_indices,
+      activ = activation,
+      hidden_layer_bias = hidden_layer_bias,
+      nu = nu,
+      errors_norm = errors_norm,
+      current_error = current_error,
+      current_error_norm = current_error_norm,
+      type_problem = "classification"
+    )
+    return(structure(out, class = "bcn"))
+  }
 } else {
-  out <- list(
-    y = y,
-    x = x,
-    ym = ym,
-    xm = xm,
-    xsd = xsd,
-    col_sample = col_sample,
-    table_classes = table_classes,
-    levels = levels,
-    # betas_opt = as.matrix(matrix_betas_opt[, bool_non_zero_betas]),
-    # ws_opt = as.matrix(matrix_ws_opt[, bool_non_zero_betas]),
-    betas_opt = as.matrix(matrix_betas_opt),
-    ws_opt = as.matrix(matrix_ws_opt),
-    type_optim = type_optim,
-    col_sample_indices = col_sample_indices,
-    activ = activation,
-    hidden_layer_bias = hidden_layer_bias,
-    nu = nu,
-    errors_norm = errors_norm,
-    current_error = current_error,
-    current_error_norm = current_error_norm
-  )
-  return(structure(out, class = "bcn"))
+  if (!is.null(d_reduced) && d_reduced == 1)
+  {
+    out <- list(
+      y = y,
+      x = x,
+      ym = ym,
+      xm = xm,
+      xsd = xsd,
+      col_sample = col_sample,
+      betas_opt = matrix_betas_opt,
+      ws_opt = t(matrix_ws_opt),
+      type_optim = type_optim,
+      col_sample_indices = col_sample_indices,
+      activ = activation,
+      hidden_layer_bias = hidden_layer_bias,
+      nu = nu,
+      errors_norm = errors_norm,
+      current_error = current_error,
+      current_error_norm = current_error_norm,
+      type_problem = "regression"
+    )
+
+    return(structure(out, class = "bcn"))
+
+  } else {
+    out <- list(
+      y = y,
+      x = x,
+      ym = ym,
+      xm = xm,
+      xsd = xsd,
+      col_sample = col_sample,
+      betas_opt = as.matrix(matrix_betas_opt),
+      ws_opt = as.matrix(matrix_ws_opt),
+      type_optim = type_optim,
+      col_sample_indices = col_sample_indices,
+      activ = activation,
+      hidden_layer_bias = hidden_layer_bias,
+      nu = nu,
+      errors_norm = errors_norm,
+      current_error = current_error,
+      current_error_norm = current_error_norm,
+      type_problem = "regression"
+    )
+    return(structure(out, class = "bcn"))
+  }
 }
+
 }
