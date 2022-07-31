@@ -8,7 +8,7 @@ Maintainer: T. Moudiki <thierry.moudiki@gmail.com>
 Description: Boosted Configuration (neural) Networks for supervised learning.
 LazyData: true
 License: BSD_3_clause Clear + file LICENSE
-Imports: Rcpp (>= 1.0.7)
+Imports: Rcpp (>= 1.0.7), dfoptim, minqa
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 Suggests: 
