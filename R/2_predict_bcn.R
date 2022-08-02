@@ -39,20 +39,20 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
   # columns' shifting when bias term is (not) included
   col_shift <- 0
 
-    # fit_obj$ contains ym, matrix_betasL_opt, matrix_w_opt, matrix_b_opt, nu, activation
-    if(is.vector(newx))
-    {
-      newx_scaled <- my_scale(x = t(newx), xm = fit_obj$xm,
-                                              xsd = fit_obj$xsd)
-      # initial fit
-      fitted_xL <- fit_obj$ym
-    } else {
-      newx_scaled <- my_scale(x = newx, xm = fit_obj$xm,
-                                              xsd = fit_obj$xsd)
-      # initial fit
-      fitted_xL <- tcrossprod(rep(1, nrow(newx)),
-                              fit_obj$ym)
-    }
+  # fit_obj$ contains ym, matrix_betasL_opt, matrix_w_opt, matrix_b_opt, nu, activation
+  if(is.vector(newx))
+  {
+    newx_scaled <- my_scale(x = t(newx), xm = fit_obj$xm,
+                            xsd = fit_obj$xsd)
+    # initial fit
+    fitted_xL <- fit_obj$ym
+  } else {
+    newx_scaled <- my_scale(x = newx, xm = fit_obj$xm,
+                            xsd = fit_obj$xsd)
+    # initial fit
+    fitted_xL <- tcrossprod(rep(1, nrow(newx)),
+                            fit_obj$ym)
+  }
 
   if (fit_obj$col_sample < 1) { # if columns' subsampling is used
 
@@ -61,35 +61,35 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
       newx_scaled <- t(newx_scaled)
     }
 
-        # not all the boosting iterations, but the ones before early stopping
-        for (L in 1:maxL)
+    # not all the boosting iterations, but the ones before early stopping
+    for (L in 1:maxL)
+    {
+      if (hidden_layer_bias == FALSE)
+      {
+        xreg_scaled <- newx_scaled[, fit_obj$col_sample_indices[, L]]
+      } else {
+        if(dim(newx_scaled)[1] == 1)
         {
-          if (hidden_layer_bias == FALSE)
-          {
-            xreg_scaled <- newx_scaled[, fit_obj$col_sample_indices[, L]]
-          } else {
-            if(dim(newx_scaled)[1] == 1)
-            {
-              xreg_scaled <- c(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
-            } else {
-              xreg_scaled <- cbind(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
-            }
-          }
-
-          if (is.vector(xreg_scaled))
-          {
-            xreg_scaled <- t(xreg_scaled)
-          } else {
-            xreg_scaled <- matrix(xreg_scaled,
-                                  nrow = nrow(fitted_xL))
-          }
-
-          fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
-                                                hL = calculate_hL(x = xreg_scaled,
-                                                                  w = as.vector(fit_obj$ws_opt[, L]),
-                                                                  activation = fit_obj$activ),
-                                                nu = fit_obj$nu)
+          xreg_scaled <- c(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
+        } else {
+          xreg_scaled <- cbind(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
         }
+      }
+
+      if (is.vector(xreg_scaled))
+      {
+        xreg_scaled <- t(xreg_scaled)
+      } else {
+        xreg_scaled <- matrix(xreg_scaled,
+                              nrow = nrow(fitted_xL))
+      }
+
+      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
+                                                  hL = calculate_hL(x = xreg_scaled,
+                                                                    w = as.vector(fit_obj$ws_opt[, L]),
+                                                                    activation = fit_obj$activ),
+                                                  nu = fit_obj$nu)
+    }
 
   } else { # if columns' subsampling is not used
 
@@ -98,15 +98,15 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
       newx_scaled <- cbind(1, newx_scaled)
     }
 
-      # not all the boosting iterations, but the ones before early stopping
-      for (L in 1:max(1, ncol(fit_obj$betas_opt)))
-      {
-        fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
-                                                            hL = calculate_hL(x = newx_scaled,
-                                                                              w = as.vector(fit_obj$ws_opt[, L]),
-                                                                              activation = fit_obj$activ),
-                                                            nu = fit_obj$nu)
-      }
+    # not all the boosting iterations, but the ones before early stopping
+    for (L in 1:max(1, ncol(fit_obj$betas_opt)))
+    {
+      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
+                                                  hL = calculate_hL(x = newx_scaled,
+                                                                    w = as.vector(fit_obj$ws_opt[, L]),
+                                                                    activation = fit_obj$activ),
+                                                  nu = fit_obj$nu)
+    }
   }
 
 

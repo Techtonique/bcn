@@ -15,6 +15,11 @@ get_classes <- function(probs)
   apply(probs, 1, which.max)
 }
 
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
+{
+  all(abs(x - round(as.numeric(x))) < tol)
+}
+
 my_scale <- function(x, xm = NULL, xsd = NULL)
 {
   rep_1_n <- rep.int(1, dim(x)[1])

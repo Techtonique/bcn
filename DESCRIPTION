@@ -15,5 +15,6 @@ Suggests:
     knitr,
     rmarkdown,
     randomForest,
-    pROC
+    pROC,
+    MASS
 VignetteBuilder: knitr

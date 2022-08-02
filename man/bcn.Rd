@@ -62,7 +62,7 @@ Boosted Configuration Networks (BCN)
 }
 \examples{
 
-# iris
+# iris dataset
 set.seed(1234)
 train_idx <- sample(nrow(iris), 0.8 * nrow(iris))
 X_train <- as.matrix(iris[train_idx, -ncol(iris)])
@@ -78,9 +78,8 @@ print(predict(fit_obj, newx = X_test) == y_test)
 print(mean(predict(fit_obj, newx = X_test) == y_test))
 
 
-# Boston (dataset has an ethical problem)
+# Boston dataset (dataset has an ethical problem)
 library(MASS)
-
 data("Boston")
 
 set.seed(1234)

@@ -84,7 +84,7 @@ bcn <- function(x,
   # dd_reduced <- 0 # for col_sample < 1 && for hidden_layer_bias = TRUE
 
   # classification problem
-  if (is.factor(y))
+  if (is.factor(y) || is.wholenumber(y))
   {
     type_problem <- "classification"
 
@@ -98,11 +98,10 @@ bcn <- function(x,
     n_classes <- length(unique(y))
 
     y <- bcn::one_hot_encode(as.numeric(y), n_classes)
-  }
 
-  # regression problem
-  if (is.vector(y))
-  {
+  } else {
+
+    # regression problem
     type_problem <- "regression"
     y <- matrix(y, ncol = 1)
   }
@@ -290,44 +289,47 @@ bcn <- function(x,
       {
         set.seed(L)
         out_opt <- stats::nlminb(
-            start = lower + (upper - lower) * stats::runif(length(lower)),
-            objective = InequalityOF,
-            lower = lower,
-            upper = upper
-          )
+          start = lower + (upper - lower) * stats::runif(length(lower)),
+          objective = InequalityOF,
+          lower = lower,
+          upper = upper
+        )
+        # cat("out_opt: ", "\n")
+        # print(out_opt)
+        # cat("\n")
       }
 
       if (type_optim == "nmkb")
       {
         set.seed(L)
         out_opt <- dfoptim::nmkb(
-            par = lower + (upper - lower) * stats::runif(length(lower)),
-            fn = InequalityOF,
-            lower = lower,
-            upper = upper
-          )
+          par = lower + (upper - lower) * stats::runif(length(lower)),
+          fn = InequalityOF,
+          lower = lower,
+          upper = upper
+        )
       }
 
       if (type_optim == "hjkb")
       {
         set.seed(L)
         out_opt <- dfoptim::hjkb(
-            par = lower + (upper - lower) * stats::runif(length(lower)),
-            fn = InequalityOF,
-            lower = lower,
-            upper = upper
-          )
+          par = lower + (upper - lower) * stats::runif(length(lower)),
+          fn = InequalityOF,
+          lower = lower,
+          upper = upper
+        )
       }
 
       if (type_optim == "mads")
       {
         set.seed(L)
         out_opt <- dfoptim::mads(
-            par = lower + (upper - lower) * stats::runif(length(lower)),
-            fn = InequalityOF,
-            lower = lower,
-            upper = upper
-          )
+          par = lower + (upper - lower) * stats::runif(length(lower)),
+          fn = InequalityOF,
+          lower = lower,
+          upper = upper
+        )
       }
 
       if(type_optim == "bobyqa")
@@ -375,8 +377,8 @@ bcn <- function(x,
       {
         hL_opt <-
           calculate_hL_r(x = as.matrix(x_scaled[, col_sample_indices[, L]]),
-                       w = w_opt,
-                       activation = activation)
+                         w = w_opt,
+                         activation = activation)
       } else {
 
         hL_opt <-
@@ -405,7 +407,7 @@ bcn <- function(x,
       {
         matrix_hL_opt[, L] <- hL_opt
         betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
-                             y = centered_y)$coef
+                                    y = centered_y)$coef
         matrix_betas_opt[, L] <- betaL_opt[L, ]
         # update the error
         current_error <-
@@ -507,44 +509,47 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- stats::nlminb(
-              start = lower + (upper - lower) * stats::runif(length(lower)),
-              objective = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            objective = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
+          # cat("out_opt: ", "\n")
+          # print(out_opt)
+          # cat("\n")
         }
 
         if (type_optim == "nmkb")
         {
           set.seed(L)
           out_opt <- dfoptim::nmkb(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if (type_optim == "hjkb")
         {
           set.seed(L)
           out_opt <- dfoptim::hjkb(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if (type_optim == "mads")
         {
           set.seed(L)
           out_opt <- dfoptim::mads(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if(type_optim == "bobyqa")
@@ -580,56 +585,59 @@ bcn <- function(x,
         {
           set.seed(L)
           out_opt <- stats::nlminb(
-              start = lower + (upper - lower) * stats::runif(length(lower)),
-              # dd <- d + 1
-              objective = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            # dd <- d + 1
+            objective = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
+          # cat("out_opt: ", "\n")
+          # print(out_opt)
+          # cat("\n")
         }
 
         if (type_optim == "nmkb")
         {
           set.seed(L)
           out_opt <- dfoptim::nmkb(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              # dd <- d + 1
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            # dd <- d + 1
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if (type_optim == "hjkb")
         {
           set.seed(L)
           out_opt <- dfoptim::hjkb(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              # dd <- d + 1
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            # dd <- d + 1
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if (type_optim == "mads")
         {
           set.seed(L)
           out_opt <- dfoptim::mads(
-              par = lower + (upper - lower) * stats::runif(length(lower)),
-              fn = InequalityOF,
-              lower = lower,
-              upper = upper
-            )
+            par = lower + (upper - lower) * stats::runif(length(lower)),
+            fn = InequalityOF,
+            lower = lower,
+            upper = upper
+          )
         }
 
         if(type_optim == "bobyqa")
         {
           set.seed(L)
           out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                        fn = InequalityOF,
-                        lower = lower,
-                        upper = upper)
+                                   fn = InequalityOF,
+                                   lower = lower,
+                                   upper = upper)
         }
 
         if(type_optim == "newuoa")
@@ -650,66 +658,66 @@ bcn <- function(x,
 
 
 
-    w_opt <- out_opt$par
-    matrix_ws_opt[, L] <- w_opt
-    if (verbose)
-    {
-      names(w_opt) <- paste0("w", 1:max(d, dd))
-      cat("w_opt", "\n")
-      print(w_opt)
-      cat("\n")
-    }
+      w_opt <- out_opt$par
+      matrix_ws_opt[, L] <- w_opt
+      if (verbose)
+      {
+        names(w_opt) <- paste0("w", 1:max(d, dd))
+        cat("w_opt", "\n")
+        print(w_opt)
+        cat("\n")
+      }
 
-    # calculate hL_opt
-    if (hidden_layer_bias == FALSE)
-    {
+      # calculate hL_opt
+      if (hidden_layer_bias == FALSE)
+      {
 
-      hL_opt <- calculate_hL_r(x = x_scaled,
-                             w = w_opt,
-                             activation = activation)
-    } else {
+        hL_opt <- calculate_hL_r(x = x_scaled,
+                                 w = w_opt,
+                                 activation = activation)
+      } else {
 
-      hL_opt <- calculate_hL_r(x = cbind(1, x_scaled),
-                             w = w_opt,
-                             activation = activation)
-    }
+        hL_opt <- calculate_hL_r(x = cbind(1, x_scaled),
+                                 w = w_opt,
+                                 activation = activation)
+      }
 
-    # calculate betaL_opt
-    if (method == "greedy")
-    {
-      betaL_opt <- calculate_betasL(current_error, hL_opt)
-      matrix_betas_opt[, L] <- betaL_opt
-      # update the error
-      current_error <-
-        current_error - calculate_fittedeL(betasL = betaL_opt,
-                                           hL = hL_opt,
-                                           nu = nu)
-    }
+      # calculate betaL_opt
+      if (method == "greedy")
+      {
+        betaL_opt <- calculate_betasL(current_error, hL_opt)
+        matrix_betas_opt[, L] <- betaL_opt
+        # update the error
+        current_error <-
+          current_error - calculate_fittedeL(betasL = betaL_opt,
+                                             hL = hL_opt,
+                                             nu = nu)
+      }
 
-    if (method == "direct")
-    {
-      matrix_hL_opt[, L] <- hL_opt
-      betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
-                           y = centered_y)$coef
-      matrix_betas_opt[, L] <- betaL_opt[L, ]
+      if (method == "direct")
+      {
+        matrix_hL_opt[, L] <- hL_opt
+        betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
+                                    y = centered_y)$coef
+        matrix_betas_opt[, L] <- betaL_opt[L, ]
 
-      # update the error
-      current_error <-
-        current_error - calculate_fittedeL(
-          betasL = as.vector(matrix_betas_opt[, L]),
-          hL = hL_opt,
-          nu = nu
-        )
-    }
+        # update the error
+        current_error <-
+          current_error - calculate_fittedeL(
+            betasL = as.vector(matrix_betas_opt[, L]),
+            hL = hL_opt,
+            nu = nu
+          )
+      }
 
-    # update the norm of the error matrix
-    current_error_norm <- norm(current_error, type = "F")
-    errors_norm[L] <- current_error_norm
+      # update the norm of the error matrix
+      current_error_norm <- norm(current_error, type = "F")
+      errors_norm[L] <- current_error_norm
 
-    if (show_progress) utils::setTxtProgressBar(pb, L)
+      if (show_progress) utils::setTxtProgressBar(pb, L)
 
-    L <- L + 1
-  } # end while(L <= B && current_error_norm > tol) for col_sample == 1
+      L <- L + 1
+    } # end while(L <= B && current_error_norm > tol) for col_sample == 1
 
     if (show_progress)
     {
@@ -717,111 +725,111 @@ bcn <- function(x,
       close(pb)
     }
 
-} # end main boosting loop
+  } # end main boosting loop
 
-bool_non_zero_betas <- colSums(matrix_betas_opt) != 0
-names(ym) <- names_m
-names(xm) <- names_d
-names(xsd) <- names_d
+  bool_non_zero_betas <- colSums(matrix_betas_opt) != 0
+  names(ym) <- names_m
+  names(xm) <- names_d
+  names(xsd) <- names_d
 
-if (type_problem == "classification")
-{
-  if (!is.null(d_reduced) && d_reduced == 1)
+  if (type_problem == "classification")
   {
-    out <- list(
-      y = y,
-      x = x,
-      ym = ym,
-      xm = xm,
-      xsd = xsd,
-      col_sample = col_sample,
-      table_classes = table_classes,
-      betas_opt = matrix_betas_opt,
-      ws_opt = t(matrix_ws_opt),
-      type_optim = type_optim,
-      col_sample_indices = col_sample_indices,
-      activ = activation,
-      hidden_layer_bias = hidden_layer_bias,
-      nu = nu,
-      errors_norm = errors_norm,
-      current_error = current_error,
-      current_error_norm = current_error_norm,
-      type_problem = "classification"
-    )
+    if (!is.null(d_reduced) && d_reduced == 1)
+    {
+      out <- list(
+        y = y,
+        x = x,
+        ym = ym,
+        xm = xm,
+        xsd = xsd,
+        col_sample = col_sample,
+        table_classes = table_classes,
+        betas_opt = matrix_betas_opt,
+        ws_opt = t(matrix_ws_opt),
+        type_optim = type_optim,
+        col_sample_indices = col_sample_indices,
+        activ = activation,
+        hidden_layer_bias = hidden_layer_bias,
+        nu = nu,
+        errors_norm = errors_norm,
+        current_error = current_error,
+        current_error_norm = current_error_norm,
+        type_problem = "classification"
+      )
 
-    return(structure(out, class = "bcn"))
+      return(structure(out, class = "bcn"))
 
+    } else {
+      out <- list(
+        y = y,
+        x = x,
+        ym = ym,
+        xm = xm,
+        xsd = xsd,
+        col_sample = col_sample,
+        table_classes = table_classes,
+        levels = levels,
+        betas_opt = as.matrix(matrix_betas_opt),
+        ws_opt = as.matrix(matrix_ws_opt),
+        type_optim = type_optim,
+        col_sample_indices = col_sample_indices,
+        activ = activation,
+        hidden_layer_bias = hidden_layer_bias,
+        nu = nu,
+        errors_norm = errors_norm,
+        current_error = current_error,
+        current_error_norm = current_error_norm,
+        type_problem = "classification"
+      )
+      return(structure(out, class = "bcn"))
+    }
   } else {
-    out <- list(
-      y = y,
-      x = x,
-      ym = ym,
-      xm = xm,
-      xsd = xsd,
-      col_sample = col_sample,
-      table_classes = table_classes,
-      levels = levels,
-      betas_opt = as.matrix(matrix_betas_opt),
-      ws_opt = as.matrix(matrix_ws_opt),
-      type_optim = type_optim,
-      col_sample_indices = col_sample_indices,
-      activ = activation,
-      hidden_layer_bias = hidden_layer_bias,
-      nu = nu,
-      errors_norm = errors_norm,
-      current_error = current_error,
-      current_error_norm = current_error_norm,
-      type_problem = "classification"
-    )
-    return(structure(out, class = "bcn"))
-  }
-} else {
-  if (!is.null(d_reduced) && d_reduced == 1)
-  {
-    out <- list(
-      y = y,
-      x = x,
-      ym = ym,
-      xm = xm,
-      xsd = xsd,
-      col_sample = col_sample,
-      betas_opt = matrix_betas_opt,
-      ws_opt = t(matrix_ws_opt),
-      type_optim = type_optim,
-      col_sample_indices = col_sample_indices,
-      activ = activation,
-      hidden_layer_bias = hidden_layer_bias,
-      nu = nu,
-      errors_norm = errors_norm,
-      current_error = current_error,
-      current_error_norm = current_error_norm,
-      type_problem = "regression"
-    )
+    if (!is.null(d_reduced) && d_reduced == 1)
+    {
+      out <- list(
+        y = y,
+        x = x,
+        ym = ym,
+        xm = xm,
+        xsd = xsd,
+        col_sample = col_sample,
+        betas_opt = matrix_betas_opt,
+        ws_opt = t(matrix_ws_opt),
+        type_optim = type_optim,
+        col_sample_indices = col_sample_indices,
+        activ = activation,
+        hidden_layer_bias = hidden_layer_bias,
+        nu = nu,
+        errors_norm = errors_norm,
+        current_error = current_error,
+        current_error_norm = current_error_norm,
+        type_problem = "regression"
+      )
 
-    return(structure(out, class = "bcn"))
+      return(structure(out, class = "bcn"))
 
-  } else {
-    out <- list(
-      y = y,
-      x = x,
-      ym = ym,
-      xm = xm,
-      xsd = xsd,
-      col_sample = col_sample,
-      betas_opt = as.matrix(matrix_betas_opt),
-      ws_opt = as.matrix(matrix_ws_opt),
-      type_optim = type_optim,
-      col_sample_indices = col_sample_indices,
-      activ = activation,
-      hidden_layer_bias = hidden_layer_bias,
-      nu = nu,
-      errors_norm = errors_norm,
-      current_error = current_error,
-      current_error_norm = current_error_norm,
-      type_problem = "regression"
-    )
-    return(structure(out, class = "bcn"))
+    } else {
+      out <- list(
+        y = y,
+        x = x,
+        ym = ym,
+        xm = xm,
+        xsd = xsd,
+        col_sample = col_sample,
+        betas_opt = as.matrix(matrix_betas_opt),
+        ws_opt = as.matrix(matrix_ws_opt),
+        type_optim = type_optim,
+        col_sample_indices = col_sample_indices,
+        activ = activation,
+        hidden_layer_bias = hidden_layer_bias,
+        nu = nu,
+        errors_norm = errors_norm,
+        current_error = current_error,
+        current_error_norm = current_error_norm,
+        type_problem = "regression"
+      )
+      return(structure(out, class = "bcn"))
+    }
   }
-}
 
 }
