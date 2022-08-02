@@ -84,7 +84,12 @@ bcn <- function(x,
   # dd_reduced <- 0 # for col_sample < 1 && for hidden_layer_bias = TRUE
 
   # classification problem
-  if (is.factor(y) || is.wholenumber(y))
+  if (is.wholenumber(as.numeric(y)))
+  {
+    y <- as.factor(y)
+  }
+
+  if (is.factor(y))
   {
     type_problem <- "classification"
 
