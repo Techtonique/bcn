@@ -13,13 +13,15 @@ bcn(
   lam = 0.1,
   r = 0.3,
   tol = 1e-10,
-  type_optim = c("nlminb", "nmkb", "hjkb", "mads", "bobyqa", "newuoa", "uobyqa"),
+  type_optim = c("nlminb", "nmkb", "hjkb", "mads", "bobyqa", "newuoa", "uobyqa",
+    "randomsearch"),
   activation = c("sigmoid", "tanh"),
   method = c("greedy", "direct"),
   hidden_layer_bias = TRUE,
   verbose = FALSE,
   show_progress = TRUE,
-  seed = 123
+  seed = 123,
+  ...
 )
 }
 \arguments{
@@ -39,8 +41,8 @@ bcn(
 
 \item{tol}{a numeric, convergence tolerance for an early stopping}
 
-\item{type_optim}{a string, the type of optimization procedure used for finding neural network's coefficients at each iteration ("nlminb", "nmkb", "hjkb", "mads",
-"bobyqa", "newuoa", "uobyqa")}
+\item{type_optim}{a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb", "mads",
+"bobyqa", "newuoa", "uobyqa", "randomsearch")}
 
 \item{activation}{a string, the activation function (must be bounded)}
 
@@ -53,6 +55,8 @@ bcn(
 \item{show_progress}{a boolean, if TRUE, a progress bar is displayed}
 
 \item{seed}{an integer, for reproducibility of results}
+
+\item{...}{additional parameters to be passed to the optimizer (especially, to the \code{control} parameter)}
 }
 \value{
 a list, an object of class 'bcn'

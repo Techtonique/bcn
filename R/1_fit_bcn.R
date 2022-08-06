@@ -10,14 +10,15 @@
 #' @param lam a numeric, defining lower and upper bounds neural network's coefficients
 #' @param r a numeric, usually 0.99, 0.999, 0.999 etc.
 #' @param tol a numeric, convergence tolerance for an early stopping
-#' @param type_optim a string, the type of optimization procedure used for finding neural network's coefficients at each iteration ("nlminb", "nmkb", "hjkb", "mads",
-#' "bobyqa", "newuoa", "uobyqa")
+#' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb", "mads",
+#' "bobyqa", "newuoa", "uobyqa", "randomsearch")
 #' @param activation a string, the activation function (must be bounded)
 #' @param method a string, 'greedy' or 'direct'
 #' @param hidden_layer_bias a boolean, saying if there is a bias parameter in neural network's coefficients
 #' @param verbose a boolean, controls verbosity (for checks)
 #' @param show_progress a boolean, if TRUE, a progress bar is displayed
 #' @param seed an integer, for reproducibility of results
+#' @param ... additional parameters to be passed to the optimizer (especially, to the \code{control} parameter)
 #'
 #' @return a list, an object of class 'bcn'
 #' @export
@@ -66,18 +67,20 @@ bcn <- function(x,
                 r = 0.3,
                 tol = 1e-10,
                 type_optim = c("nlminb", "nmkb", "hjkb", "mads",
-                               "bobyqa", "newuoa", "uobyqa"),
+                               "bobyqa", "newuoa", "uobyqa",
+                               "randomsearch"),
                 activation = c("sigmoid", "tanh"),
                 method = c("greedy", "direct"),
                 hidden_layer_bias = TRUE,
                 verbose = FALSE,
                 show_progress = TRUE,
-                seed = 123)
+                seed = 123,
+                ...)
 {
   stopifnot(nu > 0 && nu < 2)
   stopifnot(r > 0 && r < 1)
   stopifnot(B > 1)
-  stopifnot(col_sample >= 0.5 && col_sample <= 1) #must be &&
+  stopifnot(col_sample > 0 && col_sample <= 1) #must be &&
   d <- ncol(x)
   # d_reduced <- 0 # for col_sample < 1
   # dd <- 0 # for hidden_layer_bias = TRUE
@@ -297,7 +300,8 @@ bcn <- function(x,
           start = lower + (upper - lower) * stats::runif(length(lower)),
           objective = InequalityOF,
           lower = lower,
-          upper = upper
+          upper = upper,
+          ...
         )
         # cat("out_opt: ", "\n")
         # print(out_opt)
@@ -311,7 +315,8 @@ bcn <- function(x,
           par = lower + (upper - lower) * stats::runif(length(lower)),
           fn = InequalityOF,
           lower = lower,
-          upper = upper
+          upper = upper,
+          ...
         )
       }
 
@@ -322,7 +327,8 @@ bcn <- function(x,
           par = lower + (upper - lower) * stats::runif(length(lower)),
           fn = InequalityOF,
           lower = lower,
-          upper = upper
+          upper = upper,
+          ...
         )
       }
 
@@ -333,7 +339,8 @@ bcn <- function(x,
           par = lower + (upper - lower) * stats::runif(length(lower)),
           fn = InequalityOF,
           lower = lower,
-          upper = upper
+          upper = upper,
+          ...
         )
       }
 
@@ -343,21 +350,32 @@ bcn <- function(x,
         out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
                                  fn = InequalityOF,
                                  lower = lower,
-                                 upper = upper)
+                                 upper = upper,
+                                 ...)
       }
 
       if(type_optim == "newuoa")
       {
         set.seed(L)
         out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                 fn = InequalityOF)
+                                 fn = InequalityOF,
+                                 ...)
       }
 
       if(type_optim == "uobyqa")
       {
         set.seed(L)
         out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                 fn = InequalityOF)
+                                 fn = InequalityOF,
+                                 ...)
+      }
+
+      if(type_optim == "randomsearch")
+      {
+        set.seed(L)
+        out_opt <- bcn::random_search(objective = InequalityOF,
+                                      lower = lower, upper = upper,
+                                      ...)
       }
 
       w_opt <- out_opt$par
@@ -517,7 +535,8 @@ bcn <- function(x,
             start = lower + (upper - lower) * stats::runif(length(lower)),
             objective = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
           # cat("out_opt: ", "\n")
           # print(out_opt)
@@ -531,7 +550,8 @@ bcn <- function(x,
             par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
         }
 
@@ -542,7 +562,8 @@ bcn <- function(x,
             par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
         }
 
@@ -553,7 +574,8 @@ bcn <- function(x,
             par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
         }
 
@@ -563,21 +585,32 @@ bcn <- function(x,
           out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
                                    fn = InequalityOF,
                                    lower = lower,
-                                   upper = upper)
+                                   upper = upper,
+                                   ...)
         }
 
         if(type_optim == "newuoa")
         {
           set.seed(L)
           out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF)
+                                   fn = InequalityOF,
+                                   ...)
         }
 
         if(type_optim == "uobyqa")
         {
           set.seed(L)
           out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF)
+                                   fn = InequalityOF,
+                                   ...)
+        }
+
+        if(type_optim == "randomsearch")
+        {
+          set.seed(L)
+          out_opt <- bcn::random_search(objective = InequalityOF,
+                                        lower = lower, upper = upper,
+                                        ...)
         }
 
       } else {
@@ -594,7 +627,8 @@ bcn <- function(x,
             # dd <- d + 1
             objective = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
           # cat("out_opt: ", "\n")
           # print(out_opt)
@@ -621,7 +655,8 @@ bcn <- function(x,
             # dd <- d + 1
             fn = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
         }
 
@@ -632,7 +667,8 @@ bcn <- function(x,
             par = lower + (upper - lower) * stats::runif(length(lower)),
             fn = InequalityOF,
             lower = lower,
-            upper = upper
+            upper = upper,
+            ...
           )
         }
 
@@ -642,21 +678,32 @@ bcn <- function(x,
           out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
                                    fn = InequalityOF,
                                    lower = lower,
-                                   upper = upper)
+                                   upper = upper,
+                                   ...)
         }
 
         if(type_optim == "newuoa")
         {
           set.seed(L)
           out_opt <- minqa::newuoa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF)
+                                   fn = InequalityOF,
+                                   ...)
         }
 
         if(type_optim == "uobyqa")
         {
           set.seed(L)
           out_opt <- minqa::uobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF)
+                                   fn = InequalityOF,
+                                   ...)
+        }
+
+        if(type_optim == "randomsearch")
+        {
+          set.seed(L)
+          out_opt <- bcn::random_search(objective = InequalityOF,
+                                        lower = lower, upper = upper,
+                                        ...)
         }
 
       }
