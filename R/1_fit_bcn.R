@@ -89,6 +89,8 @@ bcn <- function(x,
   # classification problem
   if (is.factor(y) || is.integer(y))
   {
+    y <- as.factor(y)
+
     type_problem <- "classification"
 
     table_classes <-
