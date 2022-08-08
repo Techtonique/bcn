@@ -59,15 +59,20 @@ random_search <- function(objective, lower, upper,
   for (i in 1:control$iter.max)
   {
     x_val <- lower + (upper - lower) * sim_points[i, ]
-    current_val <- try(objective(x_val), silent = FALSE)
 
-    if (class(current_val) != "try-error" && !is.na(current_val))
+    # current_val <- try(objective(x_val), silent = FALSE)
+
+    current_val <- objective(x_val)
+
+    if (!is.na(current_val))
     {
       if (current_val < current_min)
       {
         current_xmin <- x_val
         current_min <- current_val
       }
+    } else {
+      next
     }
   }
 
