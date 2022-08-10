@@ -69,8 +69,16 @@ one_hot_encode <- function(y, n_classes)
 {
   n_obs <- length(y)
   res <- matrix(0, nrow=n_obs, ncol=n_classes)
-  for (i in 1:n_obs){
-    res[i, y[i]] <- 1
+  if (min(as.numeric(y)) == 0) # input index starting at 0 (index in R start at 1)
+  {
+    y_ <- y + 1L
+    for (i in 1:n_obs){
+      res[i, y_[i]] <- 1
+    }
+  } else { # input index not starting at 0
+    for (i in 1:n_obs){
+      res[i, y[i]] <- 1
+    }
   }
   return(res)
 }
