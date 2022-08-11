@@ -13,8 +13,7 @@ bcn(
   lam = 0.1,
   r = 0.3,
   tol = 1e-10,
-  type_optim = c("nlminb", "nmkb", "hjkb", "mads", "bobyqa", "newuoa", "uobyqa",
-    "randomsearch"),
+  type_optim = c("nlminb", "bobyqa", "nmkb", "hjkb", "randomsearch"),
   activation = c("sigmoid", "tanh"),
   method = c("greedy", "direct"),
   hidden_layer_bias = TRUE,
@@ -41,10 +40,10 @@ bcn(
 
 \item{tol}{a numeric, convergence tolerance for an early stopping}
 
-\item{type_optim}{a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb", "mads",
-"bobyqa", "newuoa", "uobyqa", "randomsearch")}
+\item{type_optim}{a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
+"bobyqa", "randomsearch")}
 
-\item{activation}{a string, the activation function (must be bounded)}
+\item{activation}{a string, the activation function (must be bounded). Currently: "sigmoid", "tanh".}
 
 \item{method}{a string, 'greedy' or 'direct'}
 
