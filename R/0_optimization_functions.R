@@ -8,8 +8,7 @@
 #' @param upper upper bound for search
 #' @param control a list of control parameters. For now \code{control = list(iter.max=100)},
 #' where \code{iter.max} is the maximum number of iterations allowed
-#' @param type_sampling a string, either "sobol" or "uniform": type of  sampling for random points
-#' @param seed an integer, for reproducing the result when \code{type_sampling} is \code{"uniform"}
+#' @param seed an integer, for reproducing the result
 #'
 #' @return
 #'
@@ -34,27 +33,16 @@
 #' random_search(fr, lower = c(-2, -2), upper = c(2, 2), control = list(iter.max=1000))
 #'
 random_search <- function(objective, lower, upper,
-                          type_sampling = c("sobol", "uniform"),
                           seed = 123,
                           control = list(iter.max = 100))
 {
   current_min <- .Machine$double.xmax
-  type_sampling <- match.arg(type_sampling)
   n_dim <- length(lower)
   stopifnot(n_dim == length(upper))
 
-  if (type_sampling == "sobol")
-  {
-    sim_points <- randtoolbox::sobol(n = control$iter.max,
-                                     dim = n_dim)
-  }
-
-  if (type_sampling == "uniform")
-  {
-    set.seed(seed)
-    sim_points <- matrix(runif(n = control$iter.max*n_dim),
-                         nrow = control$iter.max, ncol = n_dim)
-  }
+  set.seed(seed)
+  sim_points <- matrix(runif(n = control$iter.max*n_dim),
+                       nrow = control$iter.max, ncol = n_dim)
 
   for (i in 1:control$iter.max)
   {

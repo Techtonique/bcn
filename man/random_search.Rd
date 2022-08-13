@@ -8,7 +8,6 @@ random_search(
   objective,
   lower,
   upper,
-  type_sampling = c("sobol", "uniform"),
   seed = 123,
   control = list(iter.max = 100)
 )
@@ -20,9 +19,7 @@ random_search(
 
 \item{upper}{upper bound for search}
 
-\item{type_sampling}{a string, either "sobol" or "uniform": type of  sampling for random points}
-
-\item{seed}{an integer, for reproducing the result when \code{type_sampling} is \code{"uniform"}}
+\item{seed}{an integer, for reproducing the result}
 
 \item{control}{a list of control parameters. For now \code{control = list(iter.max=100)},
 where \code{iter.max} is the maximum number of iterations allowed}
