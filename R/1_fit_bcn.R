@@ -6,16 +6,15 @@
 #' @param y a factor, containing the variable to be explained
 #' @param B a numeric, the number of iterations of the algorithm
 #' @param nu a numeric, the learning rate of the algorithm
-#' @param col_sample a numeric, the percentage of columns adjusted at each iteration
-#' @param lam a numeric, defining lower and upper bounds neural network's coefficients
+#' @param col_sample a numeric in [0, 1], the percentage of columns adjusted at each iteration
+#' @param lam a numeric, defining lower and upper bounds neural network's weights
 #' @param r a numeric, usually 0.99, 0.999, 0.999 etc.
 #' @param tol a numeric, convergence tolerance for an early stopping
 #' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
 #' "bobyqa", "randomsearch")
 #' @param activation a string, the activation function (must be bounded). Currently: "sigmoid", "tanh".
-#' @param method a string, 'greedy' or 'direct'
-#' @param hidden_layer_bias a boolean, saying if there is a bias parameter in neural network's coefficients
-#' @param verbose a boolean, controls verbosity (for checks)
+#' @param hidden_layer_bias a boolean, saying if there is a bias parameter in neural network's weights
+#' @param verbose an integer (0, 1, 2, 3). Controls verbosity (for checks). The higher, the more verbosity.
 #' @param show_progress a boolean, if TRUE, a progress bar is displayed
 #' @param seed an integer, for reproducibility of results
 #' @param ... additional parameters to be passed to the optimizer (especially, to the \code{control} parameter)
@@ -70,9 +69,8 @@ bcn <- function(x,
                                "nmkb", "hjkb",
                                "randomsearch"),
                 activation = c("sigmoid", "tanh"),
-                method = c("greedy", "direct"),
                 hidden_layer_bias = TRUE,
-                verbose = FALSE,
+                verbose = 0,
                 show_progress = TRUE,
                 seed = 123,
                 ...)
@@ -129,16 +127,13 @@ bcn <- function(x,
   L <- NULL
   col_sample_indices <- NULL
   d_reduced <- NULL
-  # choice between Algo SC-I = "greedy" and Algo SC-III = "direct"
-  # from Wang et Li (2017)
-  method <- match.arg(method)
   # choice of activation function
   activation <- match.arg(activation)
 
   # columns' subsampling
   if (col_sample < 1)
   {
-    d_reduced <- max(1, floor(col_sample * d))
+    d_reduced <- max(2, floor(col_sample * d)) # should be max of 2? not 1 /!\
     if (hidden_layer_bias == TRUE)
     {
       dd_reduced <- d_reduced + 1
@@ -152,6 +147,7 @@ bcn <- function(x,
           sort(sample.int(n = d,
                           size = d_reduced)))
     } else {
+      # ever goes here?
       set.seed(seed)
       col_sample_indices <-
         t(sapply(1:B, function (i)
@@ -177,13 +173,6 @@ bcn <- function(x,
   matrix_betas_opt <- matrix(0, nrow = m, ncol = B)
   colnames(matrix_betas_opt) <- names_L
   rownames(matrix_betas_opt) <- names_m
-
-  if (method == "direct")
-  {
-    matrix_hL_opt <- matrix(0, nrow = N, ncol = B)
-    colnames(matrix_hL_opt) <- names_L
-    rownames(matrix_hL_opt) <- names_N
-  }
 
   if (col_sample < 1)
   {
@@ -276,9 +265,9 @@ bcn <- function(x,
 
     while (L <= B && current_error_norm > tol) {
 
-      if (verbose)
+      if (verbose >= 1)
       {
-        cat("L = ", L, "\n")
+        cat("\n -----", "L = ", L, "----- \n")
         cat("\n")
 
         cat("current_error_norm", "\n")
@@ -353,7 +342,7 @@ bcn <- function(x,
       w_opt <- out_opt$par
       matrix_ws_opt[, L] <- w_opt
 
-      if (verbose)
+      if (verbose >= 2)
       {
         cat("out_opt: ", "\n")
         print(out_opt)
@@ -385,39 +374,41 @@ bcn <- function(x,
             w = w_opt,
             activation = activation
           )
-
       }
 
-      # calculate betaL_opt with Algo SC-I
-      if (method == "greedy")
+      if (verbose >= 3)
       {
-        betaL_opt <- calculate_betasL(current_error, hL_opt)
-        matrix_betas_opt[, L] <- betaL_opt
-        # update the error
-        current_error <-
-          current_error - calculate_fittedeL(betasL = betaL_opt,
-                                             hL = hL_opt,
-                                             nu = nu)
+        cat("hL_opt", "\n")
+        print(hL_opt)
+        cat("\n")
       }
 
-      # calculate betaL_opt with Algo SC-III
-      if (method == "direct")
+      # calculate betaL_opt
+      betaL_opt <- calculate_betasL(current_error, hL_opt)
+      if (verbose >= 2)
       {
-        matrix_hL_opt[, L] <- hL_opt
-        betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
-                                    y = centered_y)$coef
-        matrix_betas_opt[, L] <- betaL_opt[L, ]
-        # update the error
-        current_error <-
-          current_error - calculate_fittedeL(
-            betasL = as.vector(matrix_betas_opt[, L]),
-            hL = hL_opt,
-            nu = nu
-          )
+        cat("betaL_opt", "\n")
+        print(betaL_opt)
+        cat("\n")
       }
+
+      matrix_betas_opt[, L] <- betaL_opt
+      # update the error
+      current_error <-
+        current_error - calculate_fittedeL(betasL = betaL_opt,
+                                           hL = hL_opt,
+                                           nu = nu)
 
       # update the norm of the error matrix
       current_error_norm <- norm(current_error, type = "F")
+
+      if (verbose >= 1)
+      {
+        cat("current_error_norm (update)", "\n")
+        print(current_error_norm)
+        cat("\n")
+      }
+
       errors_norm[L] <- current_error_norm
 
       if (show_progress) utils::setTxtProgressBar(pb, L)
@@ -492,9 +483,9 @@ bcn <- function(x,
 
     while (L <= B && current_error_norm > tol) {
 
-      if (verbose)
+      if (verbose >= 1)
       {
-        cat("L = ", L, "\n")
+        cat("\n -----", "L = ", L, "----- \n")
         cat("\n")
 
         cat("current_error_norm", "\n")
@@ -627,7 +618,7 @@ bcn <- function(x,
 
       w_opt <- out_opt$par
       matrix_ws_opt[, L] <- w_opt
-      if (verbose)
+      if (verbose >= 2)
       {
         cat("out_opt: ", "\n")
         print(out_opt)
@@ -653,36 +644,39 @@ bcn <- function(x,
                                  activation = activation)
       }
 
+      if (verbose >= 3)
+      {
+        cat("hL_opt", "\n")
+        print(hL_opt)
+        cat("\n")
+      }
+
       # calculate betaL_opt
-      if (method == "greedy")
+      betaL_opt <- calculate_betasL(current_error, hL_opt)
+      if (verbose >= 2)
       {
-        betaL_opt <- calculate_betasL(current_error, hL_opt)
-        matrix_betas_opt[, L] <- betaL_opt
-        # update the error
-        current_error <-
-          current_error - calculate_fittedeL(betasL = betaL_opt,
-                                             hL = hL_opt,
-                                             nu = nu)
+        cat("betaL_opt", "\n")
+        print(betaL_opt)
+        cat("\n")
       }
 
-      if (method == "direct")
-      {
-        matrix_hL_opt[, L] <- hL_opt
-        betaL_opt <- stats::.lm.fit(x = as.matrix(matrix_hL_opt[, 1:L]),
-                                    y = centered_y)$coef
-        matrix_betas_opt[, L] <- betaL_opt[L, ]
-
-        # update the error
-        current_error <-
-          current_error - calculate_fittedeL(
-            betasL = as.vector(matrix_betas_opt[, L]),
-            hL = hL_opt,
-            nu = nu
-          )
-      }
+      matrix_betas_opt[, L] <- betaL_opt
+      # update the error
+      current_error <-
+        current_error - calculate_fittedeL(betasL = betaL_opt,
+                                           hL = hL_opt,
+                                           nu = nu)
 
       # update the norm of the error matrix
       current_error_norm <- norm(current_error, type = "F")
+
+      if (verbose >= 1)
+      {
+        cat("current_error_norm (update)", "\n")
+        print(current_error_norm)
+        cat("\n")
+      }
+
       errors_norm[L] <- current_error_norm
 
       if (show_progress) utils::setTxtProgressBar(pb, L)

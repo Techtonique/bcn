@@ -1,0 +1,24 @@
+template:
+  params:
+    bootswatch: darkly
+url: https://techtonique.github.io/bcn/
+home:
+  title: Boosted Configuration Networks
+  description: >
+    Boosted Configuration (neural) Networks for supervised learning.
+authors:
+  T. Moudiki:
+    href: https://thierrymoudiki.github.io/
+repo:
+  url:
+    home: https://github.com/Techtonique/
+    source: https://github.com/Techtonique/bcn/
+    issue: https://github.com/Techtonique/bcn/issues
+    user: https://github.com/Techtonique/
+navbar:
+  structure:
+    left:  [home, intro, reference, articles, tutorials, news, Techtonique]
+    right: [github]
+  components:
+    Techtonique:
+      href: ../

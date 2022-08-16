@@ -15,9 +15,8 @@ bcn(
   tol = 1e-10,
   type_optim = c("nlminb", "bobyqa", "nmkb", "hjkb", "randomsearch"),
   activation = c("sigmoid", "tanh"),
-  method = c("greedy", "direct"),
   hidden_layer_bias = TRUE,
-  verbose = FALSE,
+  verbose = 0,
   show_progress = TRUE,
   seed = 123,
   ...
@@ -32,9 +31,9 @@ bcn(
 
 \item{nu}{a numeric, the learning rate of the algorithm}
 
-\item{col_sample}{a numeric, the percentage of columns adjusted at each iteration}
+\item{col_sample}{a numeric in [0, 1], the percentage of columns adjusted at each iteration}
 
-\item{lam}{a numeric, defining lower and upper bounds neural network's coefficients}
+\item{lam}{a numeric, defining lower and upper bounds neural network's weights}
 
 \item{r}{a numeric, usually 0.99, 0.999, 0.999 etc.}
 
@@ -45,11 +44,9 @@ bcn(
 
 \item{activation}{a string, the activation function (must be bounded). Currently: "sigmoid", "tanh".}
 
-\item{method}{a string, 'greedy' or 'direct'}
+\item{hidden_layer_bias}{a boolean, saying if there is a bias parameter in neural network's weights}
 
-\item{hidden_layer_bias}{a boolean, saying if there is a bias parameter in neural network's coefficients}
-
-\item{verbose}{a boolean, controls verbosity (for checks)}
+\item{verbose}{an integer (0, 1, 2, 3). Controls verbosity (for checks). The higher, the more verbosity.}
 
 \item{show_progress}{a boolean, if TRUE, a progress bar is displayed}
 
