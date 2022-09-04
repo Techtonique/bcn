@@ -7,7 +7,7 @@
 #' @param B a numeric, the number of iterations of the algorithm
 #' @param nu a numeric, the learning rate of the algorithm
 #' @param col_sample a numeric in [0, 1], the percentage of columns adjusted at each iteration
-#' @param lam a numeric, defining lower and upper bounds neural network's weights
+#' @param lam a numeric, defining lower and upper bounds for neural network's weights
 #' @param r a numeric, usually 0.99, 0.999, 0.999 etc.
 #' @param tol a numeric, convergence tolerance for an early stopping
 #' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
@@ -294,8 +294,8 @@ bcn <- function(x,
           upper = upper,
           ...
         )
-
       }
+
 
       if (type_optim == "nmkb")
       {

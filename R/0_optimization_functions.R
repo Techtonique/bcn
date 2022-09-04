@@ -69,7 +69,6 @@ random_search <- function(objective, lower, upper,
               iterations = i))
 }
 
-
 # scaled branin function for testing ( --> [0, 1]^2 ) -----
 braninsc <- function(xx)
 {

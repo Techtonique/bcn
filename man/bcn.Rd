@@ -33,7 +33,7 @@ bcn(
 
 \item{col_sample}{a numeric in [0, 1], the percentage of columns adjusted at each iteration}
 
-\item{lam}{a numeric, defining lower and upper bounds neural network's weights}
+\item{lam}{a numeric, defining lower and upper bounds for neural network's weights}
 
 \item{r}{a numeric, usually 0.99, 0.999, 0.999 etc.}
 
