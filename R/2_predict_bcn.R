@@ -1,7 +1,7 @@
 
 #' Predict method for Boosted Configuration Networks (BCN)
 #'
-#' @param fit_obj a object of class 'bcn'
+#' @param object a object of class 'bcn'
 #' @param newx new data, with no intersection with training data
 #' @param type a string, "response" is the class, "probs" are the classifier's probabilities
 #'
@@ -26,35 +26,35 @@
 #'
 #' print(predict(fit_obj, newx = X_test, type="probs"))
 #'
-predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
+predict.bcn <- function(object, newx, type=c("response", "probs"))
 {
 
-  stopifnot(class(fit_obj) == "bcn")
+  stopifnot(class(object) == "bcn")
 
   # if a bias is used in the hidden layers
-  hidden_layer_bias <- fit_obj$hidden_layer_bias
+  hidden_layer_bias <- object$hidden_layer_bias
   # maxL
-  maxL <- max(1, ncol(fit_obj$betas_opt))
+  maxL <- max(1, ncol(object$betas_opt))
 
   # columns' shifting when bias term is (not) included
   col_shift <- 0
 
-  # fit_obj$ contains ym, matrix_betasL_opt, matrix_w_opt, matrix_b_opt, nu, activation
+  # object$ contains ym, matrix_betasL_opt, matrix_w_opt, matrix_b_opt, nu, activation
   if(is.vector(newx))
   {
-    newx_scaled <- my_scale(x = t(newx), xm = fit_obj$xm,
-                            xsd = fit_obj$xsd)
+    newx_scaled <- my_scale(x = t(newx), xm = object$xm,
+                            xsd = object$xsd)
     # initial fit
-    fitted_xL <- fit_obj$ym
+    fitted_xL <- object$ym
   } else {
-    newx_scaled <- my_scale(x = newx, xm = fit_obj$xm,
-                            xsd = fit_obj$xsd)
+    newx_scaled <- my_scale(x = newx, xm = object$xm,
+                            xsd = object$xsd)
     # initial fit
     fitted_xL <- tcrossprod(rep(1, nrow(newx)),
-                            fit_obj$ym)
+                            object$ym)
   }
 
-  if (fit_obj$col_sample < 1) { # if columns' subsampling is used
+  if (object$col_sample < 1) { # if columns' subsampling is used
 
     if (is.vector(newx_scaled))
     {
@@ -66,13 +66,13 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
     {
       if (hidden_layer_bias == FALSE)
       {
-        xreg_scaled <- newx_scaled[, fit_obj$col_sample_indices[, L]]
+        xreg_scaled <- newx_scaled[, object$col_sample_indices[, L]]
       } else {
         if(dim(newx_scaled)[1] == 1)
         {
-          xreg_scaled <- c(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
+          xreg_scaled <- c(1, newx_scaled[, object$col_sample_indices[, L]])
         } else {
-          xreg_scaled <- cbind(1, newx_scaled[, fit_obj$col_sample_indices[, L]])
+          xreg_scaled <- cbind(1, newx_scaled[, object$col_sample_indices[, L]])
         }
       }
 
@@ -84,11 +84,11 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
                               nrow = nrow(fitted_xL))
       }
 
-      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
+      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
                                                   hL = calculate_hL(x = xreg_scaled,
-                                                                    w = as.vector(fit_obj$ws_opt[, L]),
-                                                                    activation = fit_obj$activ),
-                                                  nu = fit_obj$nu)
+                                                                    w = as.vector(object$ws_opt[, L]),
+                                                                    activation = object$activ),
+                                                  nu = object$nu)
     }
 
   } else { # if columns' subsampling is not used
@@ -99,18 +99,18 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
     }
 
     # not all the boosting iterations, but the ones before early stopping
-    for (L in 1:max(1, ncol(fit_obj$betas_opt)))
+    for (L in 1:max(1, ncol(object$betas_opt)))
     {
-      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = fit_obj$betas_opt[, L],
+      fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
                                                   hL = calculate_hL(x = newx_scaled,
-                                                                    w = as.vector(fit_obj$ws_opt[, L]),
-                                                                    activation = fit_obj$activ),
-                                                  nu = fit_obj$nu)
+                                                                    w = as.vector(object$ws_opt[, L]),
+                                                                    activation = object$activ),
+                                                  nu = object$nu)
     }
   }
 
 
-  if (fit_obj$type_problem == "classification")
+  if (object$type_problem == "classification")
   {
     type <- match.arg(type)
     probs <- bcn::get_probabilities(fitted_xL)
@@ -118,13 +118,13 @@ predict.bcn <- function(fit_obj, newx, type=c("response", "probs"))
     {
       temp <- bcn::get_classes(probs)
       res <- sapply(1:length(temp),
-                    function(i) bcn::vlookup(temp[i], fit_obj$table_classes,
+                    function(i) bcn::vlookup(temp[i], object$table_classes,
                                              "class", "label"))
-      return(factor(res, levels = fit_obj$levels))
+      return(factor(res, levels = object$levels))
     }
     if (type == "probs")
     {
-      colnames(probs) <- fit_obj$levels
+      colnames(probs) <- object$levels
       return(probs)
     }
   } else {

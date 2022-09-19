@@ -1,4 +1,10 @@
 
+
+check_diff_tol <- function(x, tol)
+{
+  utils::tail(abs(diff(x)), 1) <= tol
+}
+
 expit <- function(x)
 {
   1/(1+exp(-x))
@@ -82,6 +88,13 @@ one_hot_encode <- function(y, n_classes)
     }
   }
   return(res)
+}
+
+# removing columns containing only zeros
+rm_zero_cols <- function(X)
+{
+  X[, sapply(1:ncol(X),
+             function(j) !all(X[,j] %in% 0))]
 }
 
 # adapted from https://www.r-bloggers.com/2018/04/an-r-vlookup-not-so-silly-idea/

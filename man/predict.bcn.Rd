@@ -4,10 +4,10 @@
 \alias{predict.bcn}
 \title{Predict method for Boosted Configuration Networks (BCN)}
 \usage{
-\method{predict}{bcn}(fit_obj, newx, type = c("response", "probs"))
+\method{predict}{bcn}(object, newx, type = c("response", "probs"))
 }
 \arguments{
-\item{fit_obj}{a object of class 'bcn'}
+\item{object}{a object of class 'bcn'}
 
 \item{newx}{new data, with no intersection with training data}
 
