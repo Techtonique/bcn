@@ -2,7 +2,12 @@
 
 check_diff_tol <- function(x, tol)
 {
-  utils::tail(abs(diff(x)), 1) <= tol
+  z <- x[!is.na(x)] # initially errors_norm <- rep(NA, B)
+  if (length(z) >= 5)
+  {
+    return (utils::tail(abs(diff(z)), 1) >= tol)
+  }
+   return (TRUE)
 }
 
 expit <- function(x)

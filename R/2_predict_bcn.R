@@ -33,8 +33,6 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
 
   # if a bias is used in the hidden layers
   hidden_layer_bias <- object$hidden_layer_bias
-  # maxL
-  maxL <- max(1, ncol(object$betas_opt))
 
   # columns' shifting when bias term is (not) included
   col_shift <- 0
@@ -62,7 +60,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
     }
 
     # not all the boosting iterations, but the ones before early stopping
-    for (L in 1:maxL)
+    for (L in 1:object$maxL)
     {
       if (hidden_layer_bias == FALSE)
       {
@@ -99,7 +97,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
     }
 
     # not all the boosting iterations, but the ones before early stopping
-    for (L in 1:max(1, ncol(object$betas_opt)))
+    for (L in 1:object$maxL)
     {
       fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
                                                   hL = calculate_hL(x = newx_scaled,

@@ -12,7 +12,7 @@ bcn(
   col_sample = 1,
   lam = 0.1,
   r = 0.3,
-  tol = 1e-10,
+  tol = 0,
   type_optim = c("nlminb", "bobyqa", "nmkb", "hjkb", "randomsearch"),
   activation = c("sigmoid", "tanh"),
   hidden_layer_bias = TRUE,
