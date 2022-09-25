@@ -64,7 +64,7 @@ bcn <- function(x,
                 col_sample = 1,
                 lam = 0.1,
                 r = 0.3,
-                tol = 1e-10,
+                tol = 0,
                 type_optim = c("nlminb", "bobyqa",
                                "nmkb", "hjkb",
                                "randomsearch"),
@@ -263,7 +263,7 @@ bcn <- function(x,
     }
 
 
-    while (L <= B && current_error_norm > tol) {
+    while (L <= B && check_diff_tol(errors_norm, tol)) {
 
       if (verbose >= 1)
       {
@@ -415,7 +415,7 @@ bcn <- function(x,
 
       L <- L + 1
 
-    } # end while(L <= B && current_error_norm > tol) for col_sample < 1
+    } # end while(L <= B && check_diff_tol(errors_norm, tol)) for col_sample < 1
 
     if (show_progress)
     {
@@ -481,7 +481,7 @@ bcn <- function(x,
     }
 
 
-    while (L <= B && current_error_norm > tol) {
+    while (L <= B && check_diff_tol(errors_norm, tol)) {
 
       if (verbose >= 1)
       {
@@ -682,7 +682,7 @@ bcn <- function(x,
       if (show_progress) utils::setTxtProgressBar(pb, L)
 
       L <- L + 1
-    } # end while(L <= B && current_error_norm > tol) for col_sample == 1
+    } # end while(L <= B && check_diff_tol(errors_norm, tol)) for col_sample == 1
 
     if (show_progress)
     {
@@ -709,6 +709,7 @@ bcn <- function(x,
         xsd = xsd,
         col_sample = col_sample,
         table_classes = table_classes,
+        maxL = (L-1),
         betas_opt = matrix_betas_opt,
         ws_opt = t(matrix_ws_opt),
         type_optim = type_optim,
@@ -734,6 +735,7 @@ bcn <- function(x,
         col_sample = col_sample,
         table_classes = table_classes,
         levels = levels,
+        maxL = (L-1),
         betas_opt = as.matrix(matrix_betas_opt),
         ws_opt = as.matrix(matrix_ws_opt),
         type_optim = type_optim,
@@ -758,6 +760,7 @@ bcn <- function(x,
         xm = xm,
         xsd = xsd,
         col_sample = col_sample,
+        maxL = (L-1),
         betas_opt = matrix_betas_opt,
         ws_opt = t(matrix_ws_opt),
         type_optim = type_optim,
@@ -781,6 +784,7 @@ bcn <- function(x,
         xm = xm,
         xsd = xsd,
         col_sample = col_sample,
+        maxL = (L-1),
         betas_opt = as.matrix(matrix_betas_opt),
         ws_opt = as.matrix(matrix_ws_opt),
         type_optim = type_optim,
