@@ -1,4 +1,8 @@
 
+# BCN 0.5.0
+
+* Change criterion for early stopping to `utils::tail(abs(diff(errors_norm)), 1) >= tol`
+
 # BCN 0.4.0
 
 * Remove 'direct' method for now
