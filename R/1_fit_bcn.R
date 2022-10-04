@@ -8,7 +8,7 @@
 #' @param nu a numeric, the learning rate of the algorithm
 #' @param col_sample a numeric in [0, 1], the percentage of columns adjusted at each iteration
 #' @param lam a numeric, defining lower and upper bounds for neural network's weights
-#' @param r a numeric, usually 0.99, 0.999, 0.999 etc.
+#' @param r a numeric, with 0 < r < 1. Controls the convergence rate of residuals.
 #' @param tol a numeric, convergence tolerance for an early stopping
 #' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
 #' "bobyqa", "randomsearch")
@@ -692,7 +692,6 @@ bcn <- function(x,
 
   } # end main boosting loop
 
-  bool_non_zero_betas <- colSums(matrix_betas_opt) != 0
   names(ym) <- names_m
   names(xm) <- names_d
   names(xsd) <- names_d

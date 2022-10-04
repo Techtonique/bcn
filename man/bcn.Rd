@@ -35,7 +35,7 @@ bcn(
 
 \item{lam}{a numeric, defining lower and upper bounds for neural network's weights}
 
-\item{r}{a numeric, usually 0.99, 0.999, 0.999 etc.}
+\item{r}{a numeric, with 0 < r < 1. Controls the convergence rate of residuals.}
 
 \item{tol}{a numeric, convergence tolerance for an early stopping}
 
