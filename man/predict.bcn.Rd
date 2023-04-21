@@ -13,9 +13,6 @@
 
 \item{type}{a string, "response" is the class, "probs" are the classifier's probabilities}
 }
-\value{
-
-}
 \description{
 Predict method for Boosted Configuration Networks (BCN)
 }

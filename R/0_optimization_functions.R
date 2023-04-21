@@ -1,4 +1,43 @@
 
+
+# 1 - optimization functions ----------------------------------------------
+
+#' adam optimizer
+#'
+#' @param start
+#' @param objective
+#' @param n_iter
+#' @param alpha
+#' @param beta1
+#' @param beta2
+#' @param eps
+#'
+#' @return
+#' @export
+#'
+#' @examples
+adam <- function(start, objective,
+                 n_iter=100, alpha=0.02,
+                 beta1=0.9, beta2=0.999,
+                 eps=1e-8)
+{
+  xx <- start
+  # initialize first and second moments
+  m <- v <- rep(0, length(start))
+  # run the gradient descent updates
+  for (j in 1:n_iter)
+  {
+    g <- gradient(func = objective, x = xx)
+    m <- beta1 * m + (1.0 - beta1) * g
+    v <- beta2 * v + (1.0 - beta2) * g**2
+    mhat <- m / (1.0 - beta1**(j + 1))
+    vhat <- v / (1.0 - beta2**(j + 1))
+    xx <- xx - alpha * mhat / (sqrt(vhat) + eps)
+  }
+  return(list(par = xx, objective = objective(xx)))
+}
+
+
 #' Random Search
 #'
 #' Random Search derivative-free optimization
@@ -68,6 +107,41 @@ random_search <- function(objective, lower, upper,
               objective = current_min,
               iterations = i))
 }
+
+
+
+#' sgd optimizer
+#'
+#' @param start
+#' @param objective
+#' @param n_iter
+#' @param alpha
+#' @param mass
+#'
+#' @return
+#' @export
+#'
+#' @examples
+sgd <- function(start, objective,
+                n_iter=100, alpha=0.1,
+                mass=0.9)
+{
+  xx <- start
+  velocity <- rep(0, length(start))
+  for (j in 1:n_iter)
+  {
+    g <- gradient(func = objective, x = xx)
+    # velocity <- mass*velocity - (1 - mass)*g
+    # xx <- xx + alpha*velocity
+    velocity <- mass*velocity + (1 - mass)*g
+    xx <- xx - alpha*velocity
+  }
+  return(list(par = xx, objective = objective(xx)))
+}
+
+
+# 2 - objective functions -------------------------------------------------
+
 
 # scaled branin function for testing ( --> [0, 1]^2 ) -----
 braninsc <- function(xx)

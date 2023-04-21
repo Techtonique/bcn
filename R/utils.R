@@ -26,6 +26,39 @@ get_classes <- function(probs)
   apply(probs, 1, which.max)
 }
 
+gradient <- function(func, x, method.args=list(), ...){
+  # case 1/ scalar arg, scalar result (case 2/ or 3/ code should work)
+  # case 2/ vector arg, scalar result (same as special case jacobian)
+  # case 3/ vector arg, vector result (of same length, really 1/ applied multiple times))
+  f <- func(x, ...)
+  n <- length(x)   #number of variables in argument
+  side <- rep(NA, n)
+
+  case1or3 <- (n == length(f))
+
+  if((1 != length(f)) & !case1or3)
+    stop("grad assumes a scalar valued function.")
+
+  #  very simple numerical approximation
+  args <- list(eps=1e-4) # default
+  args[names(method.args)] <- method.args
+
+  side[is.na(side)] <- 1
+  eps <- rep(args$eps, n) * side
+
+  if(case1or3) return((func(x+eps, ...)-func(x-eps, ...))/(2*eps))
+
+  # now case 2
+  df <- rep(NA,n)
+  for (i in 1:n) {
+    dx_down <- dx_up <- x
+    dx_up[i] <- dx_up[i] + eps[i]
+    dx_down[i] <- dx_down[i] - eps[i]
+    df[i] <- (func(dx_up, ...) - func(dx_down, ...))/(2*eps[i])
+  }
+  return(df)
+}
+
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 {
   all(abs(x - round(as.numeric(x))) < tol)

@@ -11,7 +11,7 @@
 #' @param r a numeric, with 0 < r < 1. Controls the convergence rate of residuals.
 #' @param tol a numeric, convergence tolerance for an early stopping
 #' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
-#' "bobyqa", "randomsearch")
+#' "adam", "sgd", "randomsearch")
 #' @param activation a string, the activation function (must be bounded). Currently: "sigmoid", "tanh".
 #' @param hidden_layer_bias a boolean, saying if there is a bias parameter in neural network's weights
 #' @param verbose an integer (0, 1, 2, 3). Controls verbosity (for checks). The higher, the more verbosity.
@@ -65,9 +65,10 @@ bcn <- function(x,
                 lam = 0.1,
                 r = 0.3,
                 tol = 0,
-                type_optim = c("nlminb", "bobyqa",
+                type_optim = c("nlminb",
                                "nmkb", "hjkb",
-                               "randomsearch"),
+                               "randomsearch",
+                               "adam", "sgd"),
                 activation = c("sigmoid", "tanh"),
                 hidden_layer_bias = TRUE,
                 verbose = 0,
@@ -321,22 +322,32 @@ bcn <- function(x,
         )
       }
 
-      if(type_optim == "bobyqa")
-      {
-        set.seed(L)
-        out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                 fn = InequalityOF,
-                                 lower = lower,
-                                 upper = upper,
-                                 ...)
-      }
-
       if(type_optim == "randomsearch")
       {
         set.seed(L)
         out_opt <- bcn::random_search(objective = InequalityOF,
                                       lower = lower, upper = upper,
                                       ...)
+      }
+
+      if (type_optim == "adam")
+      {
+        set.seed(L)
+        out_opt <- bcn::adam(
+          start = lower + (upper - lower) * stats::runif(length(lower)),
+          objective = InequalityOF,
+          ...
+        )
+      }
+
+      if (type_optim == "sgd")
+      {
+        set.seed(L)
+        out_opt <- bcn::sgd(
+          start = lower + (upper - lower) * stats::runif(length(lower)),
+          objective = InequalityOF,
+          ...
+        )
       }
 
       w_opt <- out_opt$par
@@ -534,14 +545,24 @@ bcn <- function(x,
           )
         }
 
-        if(type_optim == "bobyqa")
+        if (type_optim == "adam")
         {
           set.seed(L)
-          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF,
-                                   lower = lower,
-                                   upper = upper,
-                                   ...)
+          out_opt <- bcn::adam(
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            objective = InequalityOF,
+            ...
+          )
+        }
+
+        if (type_optim == "sgd")
+        {
+          set.seed(L)
+          out_opt <- bcn::sgd(
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            objective = InequalityOF,
+            ...
+          )
         }
 
         if(type_optim == "randomsearch")
@@ -596,14 +617,26 @@ bcn <- function(x,
           )
         }
 
-        if(type_optim == "bobyqa")
+        if (type_optim == "adam")
         {
           set.seed(L)
-          out_opt <- minqa::bobyqa(par = lower + (upper - lower) * stats::runif(length(lower)),
-                                   fn = InequalityOF,
-                                   lower = lower,
-                                   upper = upper,
-                                   ...)
+          out_opt <- bcn::adam(
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            # dd <- d + 1
+            objective = InequalityOF,
+            ...
+          )
+        }
+
+        if (type_optim == "sgd")
+        {
+          set.seed(L)
+          out_opt <- bcn::sgd(
+            start = lower + (upper - lower) * stats::runif(length(lower)),
+            # dd <- d + 1
+            objective = InequalityOF,
+            ...
+          )
         }
 
         if(type_optim == "randomsearch")
