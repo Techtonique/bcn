@@ -1,6 +1,8 @@
 
 **Boosted Configuration (_Neural_) Networks**
 
+[![HitCount](https://hits.dwyl.com/Techtonique/bcn.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/bcn)
+
 # Install 
 
 - From Github: 
