@@ -1,6 +1,8 @@
 
 **Boosted Configuration (_Neural_) Networks**
 
+[![bcn status badge](https://techtonique.r-universe.dev/badges/bcn)](https://techtonique.r-universe.dev/bcn)
+[![CodeFactor](https://www.codefactor.io/repository/github/techtonique/bcn/badge)](https://www.codefactor.io/repository/github/techtonique/bcn)
 [![HitCount](https://hits.dwyl.com/Techtonique/bcn.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/bcn)
 
 # Install 
