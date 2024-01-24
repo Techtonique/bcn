@@ -10,6 +10,7 @@
 #' @param lam a numeric, defining lower and upper bounds for neural network's weights
 #' @param r a numeric, with 0 < r < 1. Controls the convergence rate of residuals.
 #' @param tol a numeric, convergence tolerance for an early stopping
+#' @param n_clusters a numeric, the number of clusters to be used in the algorithm (for now, kmeans)
 #' @param type_optim a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
 #' "adam", "sgd", "randomsearch")
 #' @param activation a string, the activation function (must be bounded). Currently: "sigmoid", "tanh".
@@ -65,6 +66,7 @@ bcn <- function(x,
                 lam = 0.1,
                 r = 0.3,
                 tol = 0,
+                n_clusters = NULL,
                 type_optim = c("nlminb",
                                "nmkb", "hjkb",
                                "randomsearch",
@@ -80,6 +82,19 @@ bcn <- function(x,
   stopifnot(r > 0 && r < 1)
   stopifnot(B > 1)
   stopifnot(col_sample > 0 && col_sample <= 1) #must be &&
+  stopifnot(lam > 0)
+
+  clustering_obj <- NULL
+  if (!is.null(n_clusters))
+  {
+    clustering_obj <- get_clusters(x = x,
+                                centers = n_clusters,
+                                seed = seed)
+    x_clustered <- clustering_obj$encoded
+    x <- cbind(x, x_clustered)
+    debug_print(x)
+  }
+
   d <- ncol(x)
   # d_reduced <- 0 # for col_sample < 1
   # dd <- 0 # for hidden_layer_bias = TRUE
@@ -752,6 +767,7 @@ bcn <- function(x,
         errors_norm = errors_norm,
         current_error = current_error,
         current_error_norm = current_error_norm,
+        clustering_obj = ifelse(is.null(n_clusters), NULL, clustering_obj),
         type_problem = "classification"
       )
 
@@ -778,6 +794,7 @@ bcn <- function(x,
         errors_norm = errors_norm,
         current_error = current_error,
         current_error_norm = current_error_norm,
+        clustering_obj = clustering_obj,
         type_problem = "classification"
       )
       return(structure(out, class = "bcn"))
@@ -803,6 +820,7 @@ bcn <- function(x,
         errors_norm = errors_norm,
         current_error = current_error,
         current_error_norm = current_error_norm,
+        clustering_obj = clustering_obj,
         type_problem = "regression"
       )
 
@@ -827,6 +845,7 @@ bcn <- function(x,
         errors_norm = errors_norm,
         current_error = current_error,
         current_error_norm = current_error_norm,
+        clustering_obj = clustering_obj,
         type_problem = "regression"
       )
       return(structure(out, class = "bcn"))

@@ -1,11 +1,13 @@
 ---
-title: "Introduction to `bcn` package"
+title: "BCN with observations clustering"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{bcn-intro}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+**BCN with observations clustering**
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -20,32 +22,6 @@ library(bcn)
 library(randomForest)
 library(pROC)
 ```
-
-A few years ago in 2018, I discussed Boosted Configuration (_neural_) Networks (BCN, for multivariate time series forecasting) [in this document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks). Unlike [Stochastic Configuration Networks](https://arxiv.org/pdf/1702.03180.pdf) from which they are inspired, BCNs aren't **randomized**. Rather, they are closer to Gradient Boosting Machines and Matching Pursuit algorithms; with base learners being single-layered feedforward _neural_ networks -- that are actually optimized at each iteration of the algorithm. 
-
-The mathematician that you are has certainly been 
-asking himself questions about the convexity of the problem at line 4, algorithm 1 (in 
-[the document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks)). As of July 2022, there are unfortunately no answers to that question. BCNs works well __empirically__, as we'll see, and finding the maximum at line 4 of the algorithm is achieved, by default, with R's `stats::nlminb`. Other derivative-free optimizers are available in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn). 
-
-
-As it will be shown in this document, BCNs can be used __for classification__. For this purpose, and as implemented in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn), the response (variable to be explained) containing the classes is one-hot encoded as a matrix of probabilities equal to 0 or 1. Then, the classification technique dealing with a one-hot encoded response matrix is similar to the one presented [in this  post](https://thierrymoudiki.github.io/blog/2021/09/26/python/quasirandomizednn/classification-using-regression).
-
-3 _toy_ datasets are used for this basic demo of R package `bcn`: Iris, Wine, Penguins. 
-For each dataset, hyperparameter tuning has already been done. Repeated 5-fold cross-validation was carried out on 80% of the data, for each dataset, and the accuracy reported in the table below is calculated on the remaining 20% of the data. BCN results are compared to  [Random Forest](https://cran.r-project.org/web/packages/randomForest/)'s (with default parameters), in order to verify that BCN results are not absurd -- it's not a competition between Random Forest and BCN here. 
-
-The future for [R package `bcn`](https://github.com/Techtonique/bcn) (in no particular order)? 
-
-- Implement BCN for regression (a continuous response)
-- Improve the speed of execution for high dimensional problems
-- Implement a Python version 
-
-
-| Dataset      | BCN test set Accuracy | Random Forest test set accuracy |
-|--------------|:-----:|-----------:|
-| iris |  **100%** |        93.33% |
-| Wine |  **97.22%** |      94.44% |
-| Penguins |  **100%** |        **100%** |
-
 
 
 **Content**
@@ -115,6 +91,7 @@ y_test <- iris$Species[-train_idx]
 ptm <- proc.time()
 fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 10L, nu = 0.335855,
                     lam = 10**0.7837525, r = 1 - 10**(-5.470031), tol = 10**-7,
+                    n_clusters = 3L,
                     activation = "tanh", type_optim = "nlminb", show_progress = FALSE)
 cat("Elapsed: ", (proc.time() - ptm)[3])
 ```
@@ -166,7 +143,9 @@ y_test <- as.factor(wine$target[-train_idx])
 ptm <- proc.time()
 fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 6L, nu = 0.8715725,
                     lam = 10**0.2143678, r = 1 - 10**(-6.1072786),
-                    tol = 10**-4.9605713, show_progress = FALSE)
+                    tol = 10**-4.9605713, 
+                    n_clusters = 3L,
+                    show_progress = FALSE)
 cat("Elapsed: ", (proc.time() - ptm)[3])
 ```
 
@@ -248,6 +227,7 @@ y_test <- factor(y[-index_train])
 ptm <- proc.time()
 fit_obj <- bcn::bcn(x = X_train, y = y_train, B = 23, nu = 0.470043,
                     lam = 10**-0.05766029, r = 1 - 10**(-7.905866), tol = 10**-7, 
+                    n_clusters = 3L,
                     show_progress = FALSE)
 cat("Elapsed: ", (proc.time() - ptm)[3])
 ```

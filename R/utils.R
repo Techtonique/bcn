@@ -10,6 +10,14 @@ check_diff_tol <- function(x, tol)
    return (TRUE)
 }
 
+# prehistoric stuff -----
+debug_print <- function(x) {
+  cat("\n")
+  print(paste0(deparse(substitute(x)), "'s value:"))
+  print(x)
+  cat("\n")
+}
+
 expit <- function(x)
 {
   1/(1+exp(-x))

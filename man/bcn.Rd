@@ -13,6 +13,7 @@ bcn(
   lam = 0.1,
   r = 0.3,
   tol = 0,
+  n_clusters = NULL,
   type_optim = c("nlminb", "nmkb", "hjkb", "randomsearch", "adam", "sgd"),
   activation = c("sigmoid", "tanh"),
   hidden_layer_bias = TRUE,
@@ -38,6 +39,8 @@ bcn(
 \item{r}{a numeric, with 0 < r < 1. Controls the convergence rate of residuals.}
 
 \item{tol}{a numeric, convergence tolerance for an early stopping}
+
+\item{n_clusters}{a numeric, the number of clusters to be used in the algorithm (for now, kmeans)}
 
 \item{type_optim}{a string, the type of optimization procedure used for finding neural network's weights at each iteration ("nlminb", "nmkb", "hjkb",
 "adam", "sgd", "randomsearch")}

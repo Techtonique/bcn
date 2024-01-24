@@ -1,3 +1,7 @@
+# BCN 0.6.0 -- 2024-01-24
+
+* Add `n_clusters` argument to `bcn` to specify the number of clusters to be found (for now, 
+by using k-means clustering)
 
 # BCN 0.5.0
 
