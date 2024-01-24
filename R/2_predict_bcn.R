@@ -157,9 +157,6 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
       # initial fit
       fitted_xL <- object$ym
     } else {
-      debug_print(newx)
-      debug_print(object$xm)
-      debug_print(object$xsd)
       newx_scaled <- my_scale(x = newx, xm = object$xm,
                               xsd = object$xsd)
       # initial fit

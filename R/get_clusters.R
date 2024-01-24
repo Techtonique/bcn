@@ -37,7 +37,7 @@ get_clusters <- function(x, centers=2L,
     clustering_obj$xsd <- drop(attr(scaled_x, "scaled:scale"))
     clustering_obj$encoded <- bcn::one_hot_encode(clustering_obj$cluster,
                                                     n_classes = centers)
-    debug_print(clustering_obj)
+
     return(clustering_obj)
   } else { # prediction time only (on test set)
     if(is.null(clustering_obj$xm) | is.null(clustering_obj$xsd))
@@ -48,7 +48,7 @@ get_clusters <- function(x, centers=2L,
                                    centers=clustering_obj$centers)
     clustered_obj$encoded <- bcn::one_hot_encode(clustered_obj$cluster,
                                                    n_classes = length(clustering_obj$size))
-    debug_print(clustered_obj)
+
     return(clustered_obj)
   }
 }

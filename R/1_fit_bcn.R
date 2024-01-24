@@ -92,7 +92,6 @@ bcn <- function(x,
                                 seed = seed)
     x_clustered <- clustering_obj$encoded
     x <- cbind(x, x_clustered)
-    debug_print(x)
   }
 
   d <- ncol(x)
