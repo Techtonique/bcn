@@ -1,7 +1,7 @@
 Package: bcn
 Type: Package
 Title: Boosted Configuration Networks
-Version: 0.6.1
+Version: 0.6.2
 Date: 2024-01-25
 Author: T. Moudiki
 Maintainer: T. Moudiki <thierry.moudiki@gmail.com>
