@@ -1,8 +1,8 @@
 Package: bcn
 Type: Package
 Title: Boosted Configuration Networks
-Version: 0.6.0
-Date: 2024-01-24
+Version: 0.6.1
+Date: 2024-01-25
 Author: T. Moudiki
 Maintainer: T. Moudiki <thierry.moudiki@gmail.com>
 Description: Boosted Configuration (neural) Networks for supervised learning.

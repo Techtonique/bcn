@@ -103,8 +103,10 @@ plot(fit_obj$errors_norm, type='l')
 ```{r}
 preds <- predict(fit_obj, newx = X_test)
 
+# accuracy
 mean(preds == y_test)
 
+# confusion matrix
 table(y_test, preds)
 ```
 
@@ -157,8 +159,10 @@ plot(fit_obj$errors_norm, type='l')
 ```{r}
 preds <- predict(fit_obj, newx = X_test)
 
+# accuracy
 mean(preds == y_test)
 
+# confusion matrix
 table(y_test, preds)
 ```
 
@@ -240,8 +244,10 @@ plot(fit_obj$errors_norm, type='l')
 ```{r}
 preds <- predict(fit_obj, newx = X_test)
 
+# accuracy
 mean(preds == y_test)
 
+# confusion matrix
 table(y_test, preds)
 ```
 

@@ -12,9 +12,9 @@ NumericVector colsums_cpp(NumericMatrix x)
   NumericVector res(m); // containing the result
   double temp;
 
-  for(long int i = 0; i < m; i++) {
+  for(unsigned long int i = 0; i < m; i++) {
     temp = 0;
-    for(long int j = 0; j < n; j++) {
+    for(unsigned long int j = 0; j < n; j++) {
       temp += x(j, i);
     }
     res(i) = temp;
@@ -33,7 +33,7 @@ double crossprod_cpp(NumericVector x, NumericVector y)
   } */
   double res = 0; // variable containing the result
 
-  for(int i = 0; i < n; i++) {
+  for(unsigned long int i = 0; i < n; i++) {
     res += x(i)*y(i);
   }
   return(res);
@@ -47,7 +47,7 @@ NumericVector columns_crossprod_cpp(NumericMatrix eL)
   NumericVector res(m); // variable containing the result
   NumericVector temp(eL.nrow());
 
-  for(long int i = 0; i < m; i++) {
+  for(unsigned long int i = 0; i < m; i++) {
     temp = eL(_, i);
     res(i) = crossprod_cpp(temp, temp);
   }
@@ -65,7 +65,7 @@ NumericVector squared_crossprod_cpp(NumericMatrix eL, NumericVector hL)
   } */
   NumericVector res(m); // variable containing the result
 
-  for(long int i = 0; i < m; i++) {
+  for(unsigned long int i = 0; i < m; i++) {
     res(i) = pow(crossprod_cpp(eL(_, i), hL), 2);
   }
 
@@ -87,19 +87,18 @@ NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activa
     } */
 
     if (activation == "tanh")  {
-      for(long int i = 0; i < N; i++) {
+      for(unsigned long int i = 0; i < N; i++) {
         res(i) = std::tanh(crossprod_cpp(x(i, _), w));
       }
       return(res);
-    }
-
-    if (activation == "sigmoid") {
-      for(long int i = 0; i < N; i++) {
+    } else if (activation == "sigmoid") {
+      for(unsigned long int i = 0; i < N; i++) {
         res(i) = 1/(1 + std::exp(-(crossprod_cpp(x(i, _), w))));
       }
       return(res);
+    } else {
+      ::Rf_error("activation function not implemented");
     }
-
 }
 
 // calculate xsi, that serve for determining the condition of convergence
@@ -120,7 +119,7 @@ NumericVector calculate_betasL(NumericMatrix eL, NumericVector hL)
   }*/
   NumericVector res(m); // variable containing the result
 
-  for (long int i = 0; i < m; i++)
+  for (unsigned long int i = 0; i < m; i++)
   {
     res(i) = crossprod_cpp(eL(_, i), hL);
   }
@@ -134,8 +133,8 @@ NumericMatrix calculate_fittedeL(NumericVector betasL, NumericVector hL, double 
   unsigned long int m = betasL.size();
   unsigned long int N = hL.size();
   NumericMatrix res(N, m); // variable containing the result
-  for (long int i = 0; i < N; i++){
-    for (long int j = 0; j < m; j++)
+  for (unsigned long int i = 0; i < N; i++){
+    for (unsigned long int j = 0; j < m; j++)
     {
       res(i, j) = nu*betasL(j)*hL(i);
     }

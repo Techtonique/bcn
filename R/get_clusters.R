@@ -35,6 +35,8 @@ get_clusters <- function(x, centers=2L,
                                     centers=centers)
     clustering_obj$xm <- drop(attr(scaled_x, "scaled:center"))
     clustering_obj$xsd <- drop(attr(scaled_x, "scaled:scale"))
+    if (any(clustering_obj$xsd < .Machine$double.eps))
+      clustering_obj$xsd[clustering_obj$xsd < .Machine$double.eps] <- 1
     clustering_obj$encoded <- bcn::one_hot_encode(clustering_obj$cluster,
                                                     n_classes = centers)
 

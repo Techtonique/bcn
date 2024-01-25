@@ -90,8 +90,7 @@ bcn <- function(x,
     clustering_obj <- get_clusters(x = x,
                                 centers = n_clusters,
                                 seed = seed)
-    x_clustered <- clustering_obj$encoded
-    x <- cbind(x, x_clustered)
+    x <- cbind(x, clustering_obj$encoded)
   }
 
   d <- ncol(x)
@@ -135,7 +134,8 @@ bcn <- function(x,
   xscales <- my_scale(x)
   xm <- xscales$xm
   xsd <- xscales$xsd
-  if (any(xsd == 0)) stop("remove columns (covariates) with standard deviations equal to 0")
+  if (any(xsd < .Machine$double.eps))
+    xsd[xsd < .Machine$double.eps] <- 1
   x_scaled <- xscales$res
   centered_y <- my_scale(x = y, xm = ym)
   type_optim <- match.arg(type_optim)
