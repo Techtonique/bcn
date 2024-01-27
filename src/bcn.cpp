@@ -110,7 +110,7 @@ NumericVector calculate_xsiL_cpp(NumericMatrix eL, NumericVector hL, double nu,
 // compute the regressor at step L
 // only with bounded activation functions (sigmoid and tanh here)
 // [[Rcpp::export]]
-NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activation)
+NumericVector calculate_hL_cpp(NumericMatrix x, NumericVector w, Rcpp::String activation)
 {
   unsigned long int N = x.nrow();
   NumericVector res(N); // variable containing the result
@@ -124,13 +124,13 @@ NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activa
         res(i) = std::tanh(crossprod_cpp(x(i, _), w));
       }
       return(res);
-    } else if (activation == "sigmoid") {
+    }
+
+    if (activation == "sigmoid") {
       for(unsigned long int i = 0; i < N; i++) {
         res(i) = 1/(1 + std::exp(-(crossprod_cpp(x(i, _), w))));
       }
       return(res);
-    } else {
-      ::Rf_error("activation function not implemented");
     }
 }
 

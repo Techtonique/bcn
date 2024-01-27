@@ -96,7 +96,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
         }
 
         fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
-                                                    hL = calculate_hL(x = xreg_scaled,
+                                                    hL = calculate_hL_r(x = xreg_scaled,
                                                                       w = as.vector(object$ws_opt[, L]),
                                                                       activation = object$activ),
                                                     nu = object$nu)
@@ -113,7 +113,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
       for (L in 1:object$maxL)
       {
         fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
-                                                    hL = calculate_hL(x = newx_scaled,
+                                                    hL = calculate_hL_r(x = newx_scaled,
                                                                       w = as.vector(object$ws_opt[, L]),
                                                                       activation = object$activ),
                                                     nu = object$nu)
@@ -195,7 +195,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
         }
 
         fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
-                                                    hL = calculate_hL(x = xreg_scaled,
+                                                    hL = calculate_hL_r(x = xreg_scaled,
                                                                       w = as.vector(object$ws_opt[, L]),
                                                                       activation = object$activ),
                                                     nu = object$nu)
@@ -212,7 +212,7 @@ predict.bcn <- function(object, newx, type=c("response", "probs"))
       for (L in 1:object$maxL)
       {
         fitted_xL <- fitted_xL + calculate_fittedeL(betasL = object$betas_opt[, L],
-                                                    hL = calculate_hL(x = newx_scaled,
+                                                    hL = calculate_hL_r(x = newx_scaled,
                                                                       w = as.vector(object$ws_opt[, L]),
                                                                       activation = object$activ),
                                                     nu = object$nu)

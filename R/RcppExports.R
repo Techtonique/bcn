@@ -25,8 +25,8 @@ calculate_xsiL_cpp <- function(eL, hL, nu, r, L) {
     .Call(`_bcn_calculate_xsiL_cpp`, eL, hL, nu, r, L)
 }
 
-calculate_hL <- function(x, w, activation) {
-    .Call(`_bcn_calculate_hL`, x, w, activation)
+calculate_hL_cpp <- function(x, w, activation) {
+    .Call(`_bcn_calculate_hL_cpp`, x, w, activation)
 }
 
 calculate_xsiL <- function(eL, hL, nu, r, L) {
