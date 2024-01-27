@@ -18,6 +18,13 @@ debug_print <- function(x) {
   cat("\n")
 }
 
+dropout_layer <- function(h, dropout = 0, seed = 123)
+{
+  set.seed(seed)
+  mask <- (runif(length(h)) >= dropout)
+  return(h * mask / (1 - dropout))
+}
+
 expit <- function(x)
 {
   1/(1+exp(-x))
