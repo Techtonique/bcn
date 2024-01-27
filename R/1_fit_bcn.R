@@ -257,7 +257,7 @@ bcn <- function(x,
         xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
-            x = as.matrix(cbind(1, x_scaled[, col_sample_indices[, L]])),
+            x = cbind_val_cpp(1, x_scaled[, col_sample_indices[, L]]),
             w = w,
             activation = activation
           ),
@@ -395,7 +395,7 @@ bcn <- function(x,
 
         hL_opt <-
           calculate_hL_r(
-            x = cbind(1, as.matrix(x_scaled[, col_sample_indices[, L]])),
+            x = cbind_val_cpp(1, as.matrix(x_scaled[, col_sample_indices[, L]])),
             w = w_opt,
             activation = activation
           )
@@ -485,7 +485,7 @@ bcn <- function(x,
         xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
-            x = cbind(1, x_scaled),
+            x = cbind_val_cpp(1, x_scaled),
             w = w,
             activation = activation
           ),
@@ -686,7 +686,7 @@ bcn <- function(x,
                                  activation = activation)
       } else {
 
-        hL_opt <- calculate_hL_r(x = cbind(1, x_scaled),
+        hL_opt <- calculate_hL_r(x = cbind_val_cpp(1, x_scaled),
                                  w = w_opt,
                                  activation = activation)
       }

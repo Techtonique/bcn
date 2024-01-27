@@ -10,6 +10,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// cbind_val_cpp
+NumericMatrix cbind_val_cpp(unsigned int val, NumericMatrix x);
+RcppExport SEXP _bcn_cbind_val_cpp(SEXP valSEXP, SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< unsigned int >::type val(valSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cbind_val_cpp(val, x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // colsums_cpp
 NumericVector colsums_cpp(NumericMatrix x);
 RcppExport SEXP _bcn_colsums_cpp(SEXP xSEXP) {
@@ -136,6 +148,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_bcn_cbind_val_cpp", (DL_FUNC) &_bcn_cbind_val_cpp, 2},
     {"_bcn_colsums_cpp", (DL_FUNC) &_bcn_colsums_cpp, 1},
     {"_bcn_crossprod_cpp", (DL_FUNC) &_bcn_crossprod_cpp, 2},
     {"_bcn_columns_crossprod_cpp", (DL_FUNC) &_bcn_columns_crossprod_cpp, 1},

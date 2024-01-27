@@ -3,6 +3,23 @@ using namespace Rcpp;
 
 // ----- 0 - utils
 
+
+// [[Rcpp::export]]
+NumericMatrix cbind_val_cpp(unsigned int val, NumericMatrix x)
+{
+  unsigned long int n = x.nrow();
+  unsigned long int m = x.ncol();
+  unsigned long int p = m + 1;
+  NumericMatrix res(n, p);
+  for(unsigned long int i = 0; i < n; i++) {
+    for(unsigned long int j = 1; j < p; j++) {
+      res(i, j) = x(i, j - 1);
+    }
+    res(i, 0) = val;
+  }
+  return(res);
+}
+
 // calculate colSums (without checks, is.data.frame etc.)
 // [[Rcpp::export]]
 NumericVector colsums_cpp(NumericMatrix x)
