@@ -17,6 +17,10 @@ squared_crossprod_cpp <- function(eL, hL) {
     .Call(`_bcn_squared_crossprod_cpp`, eL, hL)
 }
 
+calculate_xsiL_cpp <- function(eL, hL, nu, r, L) {
+    .Call(`_bcn_calculate_xsiL_cpp`, eL, hL, nu, r, L)
+}
+
 calculate_hL <- function(x, w, activation) {
     .Call(`_bcn_calculate_hL`, x, w, activation)
 }

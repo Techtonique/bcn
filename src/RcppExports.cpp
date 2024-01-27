@@ -56,6 +56,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_xsiL_cpp
+NumericVector calculate_xsiL_cpp(NumericMatrix eL, NumericVector hL, double nu, double r, unsigned long int L);
+RcppExport SEXP _bcn_calculate_xsiL_cpp(SEXP eLSEXP, SEXP hLSEXP, SEXP nuSEXP, SEXP rSEXP, SEXP LSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type eL(eLSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type hL(hLSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< unsigned long int >::type L(LSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_xsiL_cpp(eL, hL, nu, r, L));
+    return rcpp_result_gen;
+END_RCPP
+}
 // calculate_hL
 NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activation);
 RcppExport SEXP _bcn_calculate_hL(SEXP xSEXP, SEXP wSEXP, SEXP activationSEXP) {
@@ -125,6 +140,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bcn_crossprod_cpp", (DL_FUNC) &_bcn_crossprod_cpp, 2},
     {"_bcn_columns_crossprod_cpp", (DL_FUNC) &_bcn_columns_crossprod_cpp, 1},
     {"_bcn_squared_crossprod_cpp", (DL_FUNC) &_bcn_squared_crossprod_cpp, 2},
+    {"_bcn_calculate_xsiL_cpp", (DL_FUNC) &_bcn_calculate_xsiL_cpp, 5},
     {"_bcn_calculate_hL", (DL_FUNC) &_bcn_calculate_hL, 3},
     {"_bcn_calculate_xsiL", (DL_FUNC) &_bcn_calculate_xsiL, 5},
     {"_bcn_calculate_betasL", (DL_FUNC) &_bcn_calculate_betasL, 2},
