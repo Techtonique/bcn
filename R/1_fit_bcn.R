@@ -230,7 +230,7 @@ bcn <- function(x,
       InequalityOF <- function(w) {
         # calculate hL
         # calculate xsi = (xsi_1, ..., xsi_m)
-        xsi_vec <- calculate_xsiL_r(
+        xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
             x = as.matrix(x_scaled[, col_sample_indices[, L]]),
@@ -245,7 +245,7 @@ bcn <- function(x,
         # return -xsiL*(min(xsi) > 0)
         return(-sum(xsi_vec) * (min(xsi_vec) > 0))
       }
-      InequalityOF <- compiler::cmpfun(InequalityOF)
+
 
     } else {
       # hidden_layer_bias == TRUE
@@ -254,10 +254,10 @@ bcn <- function(x,
       InequalityOF <- function(w) {
         # calculate hL
         # calculate xsi = (xsi_1, ..., xsi_m)
-        xsi_vec <- calculate_xsiL_r(
+        xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
-            x = as.matrix(cbind(1, x_scaled[, col_sample_indices[, L]])),
+            x = cbind_val_cpp(1, x_scaled[, col_sample_indices[, L]]),
             w = w,
             activation = activation
           ),
@@ -269,7 +269,7 @@ bcn <- function(x,
         # return -xsiL*(min(xsi) > 0)
         return(-sum(xsi_vec) * (min(xsi_vec) > 0))
       }
-      InequalityOF <- compiler::cmpfun(InequalityOF)
+
     }
 
     if (show_progress)
@@ -395,7 +395,7 @@ bcn <- function(x,
 
         hL_opt <-
           calculate_hL_r(
-            x = cbind(1, as.matrix(x_scaled[, col_sample_indices[, L]])),
+            x = cbind_val_cpp(1, as.matrix(x_scaled[, col_sample_indices[, L]])),
             w = w_opt,
             activation = activation
           )
@@ -459,7 +459,7 @@ bcn <- function(x,
       InequalityOF <- function(w) {
         # calculate hL
         # calculate xsi = (xsi_1, ..., xsi_m)
-        xsi_vec <- calculate_xsiL_r(
+        xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
             x = x_scaled,
@@ -474,7 +474,7 @@ bcn <- function(x,
         # return -xsiL*(min(xsi) > 0)
         return(-sum(xsi_vec) * (min(xsi_vec) > 0))
       }
-      InequalityOF <- compiler::cmpfun(InequalityOF)
+
 
     } else {
       # hidden_layer_bias == TRUE
@@ -482,10 +482,10 @@ bcn <- function(x,
       InequalityOF <- function(w) {
         # calculate hL
         # calculate xsi = (xsi_1, ..., xsi_m)
-        xsi_vec <- calculate_xsiL_r(
+        xsi_vec <- calculate_xsiL_cpp(
           eL = current_error,
           hL = calculate_hL_r(
-            x = cbind(1, x_scaled),
+            x = cbind_val_cpp(1, x_scaled),
             w = w,
             activation = activation
           ),
@@ -497,7 +497,7 @@ bcn <- function(x,
         # return -xsiL*(min(xsi) > 0)
         return(-sum(xsi_vec) * (min(xsi_vec) > 0))
       }
-      InequalityOF <- compiler::cmpfun(InequalityOF)
+
     }
 
     if (show_progress)
@@ -686,7 +686,7 @@ bcn <- function(x,
                                  activation = activation)
       } else {
 
-        hL_opt <- calculate_hL_r(x = cbind(1, x_scaled),
+        hL_opt <- calculate_hL_r(x = cbind_val_cpp(1, x_scaled),
                                  w = w_opt,
                                  activation = activation)
       }

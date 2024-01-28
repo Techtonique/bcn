@@ -1,3 +1,7 @@
+# BCN 0.7.0 -- 2024-01-28
+
+* Faster C++ implementation
+
 # BCN 0.6.2 -- 2024-01-25
 
 * Add `n_clusters` argument to `bcn` to specify the number of clusters to be found (for now, 

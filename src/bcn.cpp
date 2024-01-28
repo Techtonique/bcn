@@ -3,6 +3,23 @@ using namespace Rcpp;
 
 // ----- 0 - utils
 
+
+// [[Rcpp::export]]
+NumericMatrix cbind_val_cpp(unsigned int val, NumericMatrix x)
+{
+  unsigned long int n = x.nrow();
+  unsigned long int m = x.ncol();
+  unsigned long int p = m + 1;
+  NumericMatrix res(n, p);
+  for(unsigned long int i = 0; i < n; i++) {
+    for(unsigned long int j = 1; j < p; j++) {
+      res(i, j) = x(i, j - 1);
+    }
+    res(i, 0) = val;
+  }
+  return(res);
+}
+
 // calculate colSums (without checks, is.data.frame etc.)
 // [[Rcpp::export]]
 NumericVector colsums_cpp(NumericMatrix x)
@@ -46,10 +63,14 @@ NumericVector columns_crossprod_cpp(NumericMatrix eL)
   unsigned long int m = eL.ncol();
   NumericVector res(m); // variable containing the result
   NumericVector temp(eL.nrow());
+  double sum = 0;
 
-  for(unsigned long int i = 0; i < m; i++) {
-    temp = eL(_, i);
-    res(i) = crossprod_cpp(temp, temp);
+  for(unsigned long int j = 0; j < m; j++) {
+    sum = 0; // reset sum for each column
+    for(unsigned long int i = 0; i < m; i++) {
+      sum += pow(eL(i, j), 2);
+    }
+    res(j) = sum;
   }
   return(res);
 }
@@ -58,15 +79,18 @@ NumericVector columns_crossprod_cpp(NumericMatrix eL)
 // [[Rcpp::export]]
 NumericVector squared_crossprod_cpp(NumericMatrix eL, NumericVector hL)
 {
+  unsigned long int n = eL.nrow();
   unsigned long int m = eL.ncol();
-  //unsigned long int N = eL.nrow();
-  /* if (hL.size() != N) {
-    ::Rf_error("both input vectors must have the same length");
-  } */
+  double sum = 0;
+
   NumericVector res(m); // variable containing the result
 
-  for(unsigned long int i = 0; i < m; i++) {
-    res(i) = pow(crossprod_cpp(eL(_, i), hL), 2);
+  for(unsigned long int j = 0; j < m; j++) {
+    sum = 0; // reset sum for each column
+    for(unsigned long int i = 0; i < n; i++) {
+      sum += eL(i, j)*hL(i);
+    }
+    res(j) = pow(sum, 2);
   }
 
   return(res);
@@ -74,10 +98,19 @@ NumericVector squared_crossprod_cpp(NumericMatrix eL, NumericVector hL)
 
 // ----- 1 - algo's elements
 
+// calculate xsi, that serve for determining the condition of convergence
+// [[Rcpp::export]]
+NumericVector calculate_xsiL_cpp(NumericMatrix eL, NumericVector hL, double nu,
+                                 double r, unsigned long int L)
+{
+  //nu*(2-nu)*squared_crossprod_cpp(eL, hL)/drop(crossprod_cpp(hL, hL)) - (1 - r - (1 - r)/(L + 1))*columns_crossprod_cpp(eL)
+  return(nu*(2-nu)*squared_crossprod_cpp(eL, hL)/crossprod_cpp(hL, hL) - (1 - r - (1 - r)/(L + 1))*columns_crossprod_cpp(eL));
+}
+
 // compute the regressor at step L
 // only with bounded activation functions (sigmoid and tanh here)
 // [[Rcpp::export]]
-NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activation)
+NumericVector calculate_hL_cpp(NumericMatrix x, NumericVector w, Rcpp::String activation)
 {
   unsigned long int N = x.nrow();
   NumericVector res(N); // variable containing the result
@@ -91,13 +124,13 @@ NumericVector calculate_hL(NumericMatrix x, NumericVector w, Rcpp::String activa
         res(i) = std::tanh(crossprod_cpp(x(i, _), w));
       }
       return(res);
-    } else if (activation == "sigmoid") {
+    }
+
+    if (activation == "sigmoid") {
       for(unsigned long int i = 0; i < N; i++) {
         res(i) = 1/(1 + std::exp(-(crossprod_cpp(x(i, _), w))));
       }
       return(res);
-    } else {
-      ::Rf_error("activation function not implemented");
     }
 }
 
