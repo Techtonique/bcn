@@ -1,7 +1,7 @@
 
 **Boosted Configuration (_Neural_) Networks**
 
-[![bcn status badge](https://techtonique.r-universe.dev/badges/bcn)](https://techtonique.r-universe.dev/bcn)
+[![bcn status badge](https://r-packages.techtonique.net/badges/bcn)](https://r-packages.techtonique.net/bcn)
 [![CodeFactor](https://www.codefactor.io/repository/github/techtonique/bcn/badge/main)](https://www.codefactor.io/repository/github/techtonique/bcn/overview/main)
 [![HitCount](https://hits.dwyl.com/Techtonique/bcn.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/bcn)
 
@@ -16,12 +16,12 @@
   help(package = 'bcn')
   ```
 
-- From R universe: 
+- From Techtonique R repository: 
 
   ```R
   # Enable repository from techtonique
   options(repos = c(
-    techtonique = 'https://techtonique.r-universe.dev',
+    techtonique = 'https://r-packages.techtonique.net',
     CRAN = 'https://cloud.r-project.org'))
     
   # Download and install bcn in R

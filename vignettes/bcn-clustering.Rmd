@@ -44,12 +44,12 @@ devtools::install_github("Techtonique/bcn")
 help(package = 'bcn')
 ```
 
-Installing `bcn` from R universe:
+Installing `bcn` from Techtonique R repository:
 
 ```R
 # Enable repository from techtonique
 options(repos = c(
-  techtonique = 'https://techtonique.r-universe.dev',
+  techtonique = 'https://r-packages.techtonique.net',
   CRAN = 'https://cloud.r-project.org'))
   
 # Download and install bcn in R

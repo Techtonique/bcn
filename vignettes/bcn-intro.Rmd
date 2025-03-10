@@ -25,10 +25,10 @@ A few years ago in 2018, I discussed Boosted Configuration (_neural_) Networks (
 
 The mathematician that you are has certainly been 
 asking himself questions about the convexity of the problem at line 4, algorithm 1 (in 
-[the document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks)). As of July 2022, there are unfortunately no answers to that question. BCNs works well __empirically__, as we'll see, and finding the maximum at line 4 of the algorithm is achieved, by default, with R's `stats::nlminb`. Other derivative-free optimizers are available in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn). 
+[the document](https://www.researchgate.net/publication/332291211_Forecasting_multivariate_time_series_with_boosted_configuration_networks)). As of July 2022, there are unfortunately no answers to that question. BCNs works well __empirically__, as we'll see, and finding the maximum at line 4 of the algorithm is achieved, by default, with R's `stats::nlminb`. Other derivative-free optimizers are available in [R package `bcn`](https://r-packages.techtonique.net/ui#package:bcn). 
 
 
-As it will be shown in this document, BCNs can be used __for classification__. For this purpose, and as implemented in [R package `bcn`](https://techtonique.r-universe.dev/ui#package:bcn), the response (variable to be explained) containing the classes is one-hot encoded as a matrix of probabilities equal to 0 or 1. Then, the classification technique dealing with a one-hot encoded response matrix is similar to the one presented [in this  post](https://thierrymoudiki.github.io/blog/2021/09/26/python/quasirandomizednn/classification-using-regression).
+As it will be shown in this document, BCNs can be used __for classification__. For this purpose, and as implemented in [R package `bcn`](https://r-packages.techtonique.net/ui#package:bcn), the response (variable to be explained) containing the classes is one-hot encoded as a matrix of probabilities equal to 0 or 1. Then, the classification technique dealing with a one-hot encoded response matrix is similar to the one presented [in this  post](https://thierrymoudiki.github.io/blog/2021/09/26/python/quasirandomizednn/classification-using-regression).
 
 3 _toy_ datasets are used for this basic demo of R package `bcn`: Iris, Wine, Penguins. 
 For each dataset, hyperparameter tuning has already been done. Repeated 5-fold cross-validation was carried out on 80% of the data, for each dataset, and the accuracy reported in the table below is calculated on the remaining 20% of the data. BCN results are compared to  [Random Forest](https://cran.r-project.org/web/packages/randomForest/)'s (with default parameters), in order to verify that BCN results are not absurd -- it's not a competition between Random Forest and BCN here. 
@@ -68,12 +68,12 @@ devtools::install_github("Techtonique/bcn")
 help(package = 'bcn')
 ```
 
-Installing `bcn` from R universe:
+Installing `bcn` from Techtonique R repository:
 
 ```R
 # Enable repository from techtonique
 options(repos = c(
-  techtonique = 'https://techtonique.r-universe.dev',
+  techtonique = 'https://r-packages.techtonique.net',
   CRAN = 'https://cloud.r-project.org'))
   
 # Download and install bcn in R
