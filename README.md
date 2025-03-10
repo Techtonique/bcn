@@ -5,6 +5,8 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/techtonique/bcn/badge/main)](https://www.codefactor.io/repository/github/techtonique/bcn/overview/main)
 [![HitCount](https://hits.dwyl.com/Techtonique/bcn.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/bcn)
 
+For more details, read: https://www.researchgate.net/publication/380760578_Boosted_Configuration_neural_Networks_for_supervised_classification
+
 # Install 
 
 - From Github: 
