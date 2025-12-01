@@ -1,9 +1,11 @@
 
 **Boosted Configuration (_Neural_) Networks**
 
-[![bcn status badge](https://r-packages.techtonique.net/badges/bcn)](https://r-packages.techtonique.net/bcn)
-[![CodeFactor](https://www.codefactor.io/repository/github/techtonique/bcn/badge/main)](https://www.codefactor.io/repository/github/techtonique/bcn/overview/main)
+[![Documentation](https://img.shields.io/badge/documentation-is_here-green)](https://docs.techtonique.net/bcn/index.html)
 [![HitCount](https://hits.dwyl.com/Techtonique/bcn.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/bcn)
+![Downloads](https://r-packages.techtonique.net/badges/downloads/last-month/bcn.svg)
+![Total Downloads](https://r-packages.techtonique.net/badges/downloads/grand-total/bcn.svg?color=brightgreen)
+
 
 For more details, read: https://www.researchgate.net/publication/380760578_Boosted_Configuration_neural_Networks_for_supervised_classification
 
